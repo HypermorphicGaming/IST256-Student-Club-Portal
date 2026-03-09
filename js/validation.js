@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'storefront_users';
+const STORAGE_KEY = 'club_users';
 let editingIndex = -1;
 
 function updateField(formField, errorElement, isValid, errorMessage) {
