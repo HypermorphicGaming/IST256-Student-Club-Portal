@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'storefront_users';
+const STORAGE_KEY = 'club_users';
 let editingIndex = -1;
 
 function updateField(formField, errorElement, isValid, errorMessage) {
@@ -89,12 +89,7 @@ function getFormData(form) {
         email: data.email,
         phone: data.phone,
         gradeLevel: data.gradeLevel,
-        address: {
-            street: data.street,
-            city: data.city,
-            state: data.state,
-            zip: data.zip
-        },
+        organization: data.organization,
         creationDate: new Date().toISOString()
     };
 }
@@ -134,7 +129,7 @@ function displayAllUsers() {
                     <p class="card-text">Email: ${userData.email}</p>
                     <p class="card-text">Phone: ${userData.phone}</p>
                     <p class="card-text">Grade Level: ${userData.gradeLevel}</p>
-                    <p class="card-text">Address: ${userData.address.street}, ${userData.address.city}, ${userData.address.state} ${userData.address.zip}</p>
+                    <p class="card-text">Organization: ${userData.organization}</p>
                     <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
                     <button class="btn btn-danger" onclick="deleteUser(${index})">Delete User</button>
                 </div>
@@ -222,10 +217,7 @@ function editUser(index) {
     document.getElementById('email').value = u.email;
     document.getElementById('phone').value = u.phone || '';
     document.getElementById('gradeLevel').value = u.gradeLevel;
-    document.getElementById('street').value = u.address.street;
-    document.getElementById('city').value = u.address.city;
-    document.getElementById('state').value = u.address.state;
-    document.getElementById('zip').value = u.address.zip;
+    document.getElementById('organization').value = u.organization;
 
     editingIndex = index;
     document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
