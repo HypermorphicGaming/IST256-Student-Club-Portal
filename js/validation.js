@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'storefront_users';
+let editingIndex = -1;
 
 function updateField(formField, errorElement, isValid, errorMessage) {
     if (isValid) {
@@ -134,6 +135,7 @@ function displayAllUsers() {
                     <p class="card-text">Phone: ${userData.phone}</p>
                     <p class="card-text">Grade Level: ${userData.gradeLevel}</p>
                     <p class="card-text">Address: ${userData.address.street}, ${userData.address.city}, ${userData.address.state} ${userData.address.zip}</p>
+                    <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
                     <button class="btn btn-danger" onclick="deleteUser(${index})">Delete User</button>
                 </div>
             </div>
@@ -167,17 +169,28 @@ function handleSignupSubmit(event) {
     event.preventDefault();
 
     const form = document.getElementById("signupForm");
-
-    if (!validateForm(form)) {
-        return;
-    }
+    if (!validateForm(form)) { return; }
 
     const formData = getFormData(form);
-
     const messageElement = document.getElementById('signupMessage');
     const messageText = document.getElementById('signupMessageText');
 
-    if (saveFormDataToLocalStorage(formData)) {
+    let success = false;
+    if (editingIndex !== -1) {
+        try {
+            const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            formData.creationDate = users[editingIndex].creationDate;
+            users[editingIndex] = formData;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            success = true;
+        } catch (error) { console.log('Error updating user:', error); }
+        editingIndex = -1;
+        document.querySelector('#signupForm button[type="submit"]').textContent = 'SignUp';
+    } else {
+        success = saveFormDataToLocalStorage(formData);
+    }
+
+    if (success) {
         messageText.textContent = ' You successfully signed up!';
         messageElement.classList.remove('alert-danger');
         messageElement.classList.add('alert-success');
@@ -197,6 +210,26 @@ function handleSignupSubmit(event) {
     });
 
     displayAllUsers();
+}
+
+function editUser(index) {
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const u = users[index];
+    if (!u) return;
+
+    document.getElementById('firstName').value = u.firstName;
+    document.getElementById('lastName').value = u.lastName;
+    document.getElementById('email').value = u.email;
+    document.getElementById('phone').value = u.phone || '';
+    document.getElementById('gradeLevel').value = u.gradeLevel;
+    document.getElementById('street').value = u.address.street;
+    document.getElementById('city').value = u.address.city;
+    document.getElementById('state').value = u.address.state;
+    document.getElementById('zip').value = u.address.zip;
+
+    editingIndex = index;
+    document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
+    document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });
 }
 
 function initilizeApp() {
