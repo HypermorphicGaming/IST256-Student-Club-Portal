@@ -6,15 +6,19 @@ function updateField(formField, errorElement, isValid, errorMessage) {
         formField.classList.add('is-valid');
         formField.classList.remove('is-invalid');
 
-        errorElement.textContent = "";
-        errorElement.classList.remove('show');
+        if (errorElement) {
+            errorElement.textContent = "";
+            errorElement.classList.remove('show');
+        }
     }
     else {
         formField.classList.add('is-invalid');
         formField.classList.remove('is-valid');
 
-        errorElement.textContent = errorMessage;
-        errorElement.classList.add('show');
+        if (errorElement) {
+            errorElement.textContent = errorMessage;
+            errorElement.classList.add('show');
+        }
     }
 }
 
@@ -112,6 +116,10 @@ function saveFormDataToLocalStorage(formData) {
 
 function displayAllUsers() {
     const userCardContainer = document.getElementById('userCard');
+    if (!userCardContainer) {
+        return;
+    }
+
     const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
     if (users.length === 0) {
@@ -164,6 +172,8 @@ function handleSignupSubmit(event) {
     event.preventDefault();
 
     const form = document.getElementById("signupForm");
+    form.classList.add('was-validated');
+
     if (!validateForm(form)) { return; }
 
     const formData = getFormData(form);
@@ -227,13 +237,14 @@ function editUser(index) {
 function initilizeApp() {
     console.log('Setting Everything');
     displayAllUsers();
-
-    document.getElementById('signupMessageClose').addEventListener('click', () => {
-        const messageElement = document.getElementById('signupMessage');
-        messageElement.classList.remove('show');
-        messageElement.classList.add('d-none');
-    });
 }
 
-document.getElementById('signupForm').addEventListener('submit', handleSignupSubmit);
-document.addEventListener('DOMContentLoaded', initilizeApp);
+document.addEventListener('DOMContentLoaded', () => {
+    const signupForm = document.getElementById('signupForm');
+
+    if (signupForm) {
+        signupForm.addEventListener('submit', handleSignupSubmit);
+    }
+
+    initilizeApp();
+});
