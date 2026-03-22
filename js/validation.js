@@ -251,4 +251,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initilizeApp();
+    // Search functionality
+function filterUsers() {
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    const filteredUsers = users.filter(user => 
+        user.firstName.toLowerCase().includes(searchInput) ||
+        user.lastName.toLowerCase().includes(searchInput) ||
+        user.email.toLowerCase().includes(searchInput)
+    );
+
+    const userCardContainer = document.getElementById('userCard');
+
+    if (filteredUsers.length === 0) {
+        userCardContainer.innerHTML = '<p>No matching users found.</p>';
+        return;
+    }
+
+    let cardsHtml = '';
+
+    filteredUsers.forEach((userData, index) => {
+        cardsHtml += `
+            <div class="card">
+                <div>
+                    <h5>${userData.firstName} ${userData.lastName}</h5>
+                    <p>Email: ${userData.email}</p>
+                </div>
+            </div>
+        `;
+    });
+
+    userCardContainer.innerHTML = cardsHtml;
+}
 });
