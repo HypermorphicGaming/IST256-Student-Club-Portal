@@ -1,5 +1,5 @@
 const NAVBAR_HTML = `
-<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="home.html">Club Portal</a>
 
