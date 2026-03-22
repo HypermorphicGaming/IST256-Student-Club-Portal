@@ -58,7 +58,7 @@ function validateField(formField) {
             case 'lastName':
                 if (value.length < 2) {
                     isValid = false;
-                    errorMessage = 'Name must be atleast 2 characters';
+                    errorMessage = 'Name must be at least 2 characters';
                 }
                 break;
 
