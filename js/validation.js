@@ -1,5 +1,19 @@
-const STORAGE_KEY = 'club_users';
 let editingIndex = -1;
+
+// Page-aware configuration
+const getPageConfig = () => {
+  const isEventsPage = window.location.pathname.includes('manageEvents');
+  return {
+    storageKey: isEventsPage ? 'club_events' : 'club_users',
+    messages: {
+      emptyState: isEventsPage ? 'No events added yet.' : 'No users registered yet.',
+      saveSuccess: isEventsPage ? 'Event details saved successfully.' : 'User details saved successfully.',
+      saveError: isEventsPage ? 'Unable to save event details.' : 'Unable to save user details.'
+    }
+  };
+};
+
+let pageConfig = null;
 
 function updateField(formField, errorElement, isValid, errorMessage) {
     if (isValid) {
@@ -100,10 +114,10 @@ function getFormData(form) {
 
 function saveFormDataToLocalStorage(formData) {
     try {
-        const existingUsers = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const existingUsers = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
         existingUsers.push(formData);
         const usersJSON = JSON.stringify(existingUsers);
-        localStorage.setItem(STORAGE_KEY, usersJSON);
+        localStorage.setItem(pageConfig.storageKey, usersJSON);
 
         console.log('Saved successfully!');
         return true;
@@ -120,10 +134,10 @@ function displayAllUsers() {
         return;
     }
 
-    const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
 
     if (users.length === 0) {
-        userCardContainer.innerHTML = '<p>No users registered yet.</p>';
+        userCardContainer.innerHTML = `<p>${pageConfig.messages.emptyState}</p>`;
         return;
     }
 
@@ -150,11 +164,11 @@ function displayAllUsers() {
 
 function deleteUser(index) {
     try {
-        const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
 
         if (index >= 0 && index < users.length) {
             users.splice(index, 1);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            localStorage.setItem(pageConfig.storageKey, JSON.stringify(users));
             console.log('User deleted successfully!');
         }
         else {
@@ -183,10 +197,10 @@ function handleSignupSubmit(event) {
     let success = false;
     if (editingIndex !== -1) {
         try {
-            const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
             formData.creationDate = users[editingIndex].creationDate;
             users[editingIndex] = formData;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            localStorage.setItem(pageConfig.storageKey, JSON.stringify(users));
             success = true;
         } catch (error) { console.log('Error updating user:', error); }
         editingIndex = -1;
@@ -196,11 +210,11 @@ function handleSignupSubmit(event) {
     }
 
     if (success) {
-        messageText.textContent = ' User details saved successfully.';
+        messageText.textContent = ' ' + pageConfig.messages.saveSuccess;
         messageElement.classList.remove('alert-danger');
         messageElement.classList.add('alert-success');
     } else {
-        messageText.textContent = ' Unable to save user details.';
+        messageText.textContent = ' ' + pageConfig.messages.saveError;
         messageElement.classList.remove('alert-success');
         messageElement.classList.add('alert-danger');
     }
@@ -218,7 +232,7 @@ function handleSignupSubmit(event) {
 }
 
 function editUser(index) {
-    const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
     const u = users[index];
     if (!u) return;
 
@@ -240,6 +254,7 @@ function initilizeApp() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    pageConfig = getPageConfig();
     const signupForm = document.getElementById('signupForm');
 
     if (signupForm) {
@@ -254,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Search functionality
 function filterUsers() {
     const searchInput = document.getElementById("searchInput").value.toLowerCase();
-    const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
 
     const filteredUsers = users.filter(user => 
         user.firstName.toLowerCase().includes(searchInput) ||
