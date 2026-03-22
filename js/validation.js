@@ -266,42 +266,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initializeApp();
-});
-// Search functionality
-function filterUsers() {
-    const searchInput = document.getElementById("searchInput").value.toLowerCase();
-    const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
+    $('#searchInput').on('keyup', function () {
+    const value = $(this).val().toLowerCase();
+    const data = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
 
-    const filteredUsers = users.filter(user => 
-        user.firstName.toLowerCase().includes(searchInput) ||
-        user.lastName.toLowerCase().includes(searchInput) ||
-        user.email.toLowerCase().includes(searchInput) ||
-        user.gradeLevel.toLowerCase().includes(seachInput) ||
-        user.organization.toLowerCase().includes(searchInput)
+    const filtered = data.filter(item =>
+        Object.values(item).some(val =>
+            String(val).toLowerCase().includes(value)
+        )
     );
 
-    const userCardContainer = document.getElementById('userCard');
-
-    if (filteredUsers.length === 0) {
-        userCardContainer.innerHTML = '<p class="text-danger text-center">No matching users found.</p>';
-        return;
-    }
-
-    let cardsHtml = '';
-
-    filteredUsers.forEach((userData, index) => {
-        cardsHtml += `
-            <div class="card">
-                <div>
-                    <h5>${userData.firstName} ${userData.lastName}</h5>
-                    <p>Email: ${userData.email}</p>
-                    <p>Phone: ${userData.phone}</p>
-                    <p>Grade Level: ${userData.gradeLevel}</p>
-                    <p>Organization: ${userData.organization}</p>
-                </div>
-            </div>
-        `;
+    renderData(filtered);
     });
-
-    userCardContainer.innerHTML = cardsHtml;
-}
+});
