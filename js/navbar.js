@@ -17,6 +17,9 @@ const NAVBAR_HTML = `
                 <li class="nav-item">
                     <a class="nav-link" href="manageUsers.html">Manage Users</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="manageEvents.html">Manage Events</a>
+                </li>
             </ul>
         </div>
     </div>
