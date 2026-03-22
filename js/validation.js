@@ -248,7 +248,7 @@ function editUser(index) {
     document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });
 }
 
-function initilizeApp() {
+function initializeApp() {
     console.log('Setting Everything');
     displayAllUsers();
 }
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    initilizeApp();
+    initializeApp();
 });
 // Search functionality
 function filterUsers() {
