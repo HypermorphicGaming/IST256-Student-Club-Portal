@@ -1,19 +1,24 @@
-const STORAGE_KEY = 'storefront_user';
+const STORAGE_KEY = 'club_users';
+let editingIndex = -1;
 
 function updateField(formField, errorElement, isValid, errorMessage) {
     if (isValid) {
         formField.classList.add('is-valid');
         formField.classList.remove('is-invalid');
 
-        errorElement.textContent = "";
-        errorElement.classList.remove('show');
+        if (errorElement) {
+            errorElement.textContent = "";
+            errorElement.classList.remove('show');
+        }
     }
     else {
         formField.classList.add('is-invalid');
         formField.classList.remove('is-valid');
 
-        errorElement.textContent = errorMessage;
-        errorElement.classList.add('show');
+        if (errorElement) {
+            errorElement.textContent = errorMessage;
+            errorElement.classList.add('show');
+        }
     }
 }
 
@@ -28,13 +33,13 @@ function validateField(formField) {
 
 
 
-    if (formField.hasAttribute('required') && value === ''){
+    if (formField.hasAttribute('required') && value === '') {
         isValid = false;
         errorMessage = 'This field is required';
     }
 
     if (isValid && value !== '') {
-        switch(fieldId) {
+        switch (fieldId) {
             case 'firstName':
             case 'lastName':
                 if (value.length < 2) {
@@ -63,7 +68,7 @@ function validateForm(form) {
     let isValid = true;
 
     const formInputs = form.querySelectorAll('input, select');
-    
+
     formInputs.forEach(formField => {
         if (!validateField(formField)) {
             isValid = false;
@@ -78,7 +83,7 @@ function getFormData(form) {
 
     const data = {};
 
-    for(let [key, value] of formData.entries()) {
+    for (let [key, value] of formData.entries()) {
         data[key] = value;
     }
 
@@ -87,20 +92,19 @@ function getFormData(form) {
         lastName: data.lastName,
         email: data.email,
         phone: data.phone,
-        address: {
-            street: data.street,
-            city: data.city,
-            state: data.state,
-            zip: data.zip
-        },
+        gradeLevel: data.gradeLevel,
+        organization: data.organization,
         creationDate: new Date().toISOString()
     };
 }
 
-function savaFormDataToLocalStorage(formData) {
+function saveFormDataToLocalStorage(formData) {
     try {
-        const userJSON = JSON.stringify(formData);
-        localStorage.setItem(STORAGE_KEY, userJSON);
+        const existingUsers = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        existingUsers.push(formData);
+        const usersJSON = JSON.stringify(existingUsers);
+        localStorage.setItem(STORAGE_KEY, usersJSON);
+
         console.log('Saved successfully!');
         return true;
     }
@@ -108,53 +112,139 @@ function savaFormDataToLocalStorage(formData) {
         console.log('Error saving to local storage:', error);
         return false;
     }
-    
 }
 
-function displayUserCard(userData) {
+function displayAllUsers() {
     const userCardContainer = document.getElementById('userCard');
-    console.log(userCardContainer)
+    if (!userCardContainer) {
+        return;
+    }
 
-    let cardHtml = `
-        <div class="card">
-            <div>
-                <h5>${userData.firstName} ${userData.lastName}</h5>
-                <p class="card-text">Email: ${userData.email}</p>
-                <p class="card-text">Address: ${userData.address.street}, ${userData.address.city}, ${userData.address.state} ${userData.address.zip}</p>
-                <button class="btn btn-danger">Delete User</button>
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    if (users.length === 0) {
+        userCardContainer.innerHTML = '<p>No users registered yet.</p>';
+        return;
+    }
+
+    let cardsHtml = '';
+
+    users.forEach((userData, index) => {
+        cardsHtml += `
+            <div class="card">
+                <div>
+                    <h5>${userData.firstName} ${userData.lastName}</h5>
+                    <p class="card-text">Email: ${userData.email}</p>
+                    <p class="card-text">Phone: ${userData.phone}</p>
+                    <p class="card-text">Grade Level: ${userData.gradeLevel}</p>
+                    <p class="card-text">Organization: ${userData.organization}</p>
+                    <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteUser(${index})">Delete User</button>
+                </div>
             </div>
-        </div>
-    `;
+        `;
+    });
 
-    userCardContainer.innerHTML = cardHtml;
+    userCardContainer.innerHTML = cardsHtml;
+}
+
+function deleteUser(index) {
+    try {
+        const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+        if (index >= 0 && index < users.length) {
+            users.splice(index, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            console.log('User deleted successfully!');
+        }
+        else {
+            console.log('Invalid user index');
+        }
+
+        displayAllUsers();
+    }
+    catch (error) {
+        console.log('Error deleting user:', error);
+    }
 }
 
 function handleSignupSubmit(event) {
     event.preventDefault();
 
     const form = document.getElementById("signupForm");
+    form.classList.add('was-validated');
 
-    if(!validateForm(form)) {
-        // window.alert('Form is not valid');
-        return;
-    }
+    if (!validateForm(form)) { return; }
 
     const formData = getFormData(form);
+    const messageElement = document.getElementById('signupMessage');
+    const messageText = document.getElementById('signupMessageText');
 
-    if(savaFormDataToLocalStorage(formData)) {
-        window.alert('You successfully signed up!');
-    }
-    else {
-        window.alert('Sign up failed!!');
+    let success = false;
+    if (editingIndex !== -1) {
+        try {
+            const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            formData.creationDate = users[editingIndex].creationDate;
+            users[editingIndex] = formData;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+            success = true;
+        } catch (error) { console.log('Error updating user:', error); }
+        editingIndex = -1;
+        document.querySelector('#signupForm button[type="submit"]').textContent = 'SignUp';
+    } else {
+        success = saveFormDataToLocalStorage(formData);
     }
 
-    displayUserCard(formData);
+    if (success) {
+        messageText.textContent = ' You successfully signed up!';
+        messageElement.classList.remove('alert-danger');
+        messageElement.classList.add('alert-success');
+    } else {
+        messageText.textContent = ' Sign up failed!';
+        messageElement.classList.remove('alert-success');
+        messageElement.classList.add('alert-danger');
+    }
+
+    // Reset so animation replays each time
+    messageElement.classList.add('d-none');
+    messageElement.classList.remove('show');
+
+    requestAnimationFrame(() => {
+        messageElement.classList.remove('d-none');
+        messageElement.classList.add('show');
+    });
+
+    displayAllUsers();
+}
+
+function editUser(index) {
+    const users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const u = users[index];
+    if (!u) return;
+
+    document.getElementById('firstName').value = u.firstName;
+    document.getElementById('lastName').value = u.lastName;
+    document.getElementById('email').value = u.email;
+    document.getElementById('phone').value = u.phone || '';
+    document.getElementById('gradeLevel').value = u.gradeLevel;
+    document.getElementById('organization').value = u.organization;
+
+    editingIndex = index;
+    document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
+    document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });
 }
 
 function initilizeApp() {
     console.log('Setting Everything');
-
-    document.getElementById('signupForm').addEventListener('submit', handleSignupSubmit);
+    displayAllUsers();
 }
 
-document.addEventListener('DOMContentLoaded', initilizeApp);
+document.addEventListener('DOMContentLoaded', () => {
+    const signupForm = document.getElementById('signupForm');
+
+    if (signupForm) {
+        signupForm.addEventListener('submit', handleSignupSubmit);
+    }
+
+    initilizeApp();
+});

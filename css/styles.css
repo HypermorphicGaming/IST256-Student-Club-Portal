@@ -1,12 +1,17 @@
-footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%; /* Ensures the footer spans the full width of the viewport */
-  /* Add other styling like height, background, etc. */
-  height: 60px; /* Example height */
+.hero {
+  background-image: 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 1) 100%),
+    url("../oldMain.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Add padding to the body to prevent content from being covered by the fixed footer */
-body {
-  padding-bottom: 60px; /* Must match the footer's height */
+.hero-box {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px;
+  border-radius: 10px;
 }
