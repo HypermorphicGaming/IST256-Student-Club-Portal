@@ -266,7 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initilizeApp();
-    // Search functionality
+});
+// Search functionality
 function filterUsers() {
     const searchInput = document.getElementById("searchInput").value.toLowerCase();
     const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
@@ -274,7 +275,9 @@ function filterUsers() {
     const filteredUsers = users.filter(user => 
         user.firstName.toLowerCase().includes(searchInput) ||
         user.lastName.toLowerCase().includes(searchInput) ||
-        user.email.toLowerCase().includes(searchInput)
+        user.email.toLowerCase().includes(searchInput) ||
+        user.gradeLevel.toLowerCase().includes(seachInput) ||
+        user.organization.toLowerCase().includes(searchInput)
     );
 
     const userCardContainer = document.getElementById('userCard');
@@ -292,6 +295,9 @@ function filterUsers() {
                 <div>
                     <h5>${userData.firstName} ${userData.lastName}</h5>
                     <p>Email: ${userData.email}</p>
+                    <p>Phone: ${userData.phone}</p>
+                    <p>Grade Level: ${userData.gradeLevel}</p>
+                    <p>Organization: ${userData.organization}</p>
                 </div>
             </div>
         `;
@@ -299,4 +305,3 @@ function filterUsers() {
 
     userCardContainer.innerHTML = cardsHtml;
 }
-});
