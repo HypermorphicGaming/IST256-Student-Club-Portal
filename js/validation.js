@@ -234,15 +234,23 @@ function handleSignupSubmit(event) {
 function editUser(index) {
     const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
     const u = users[index];
+    const e = users[index];
     if (!u) return;
 
-    document.getElementById('firstName').value = u.firstName;
-    document.getElementById('lastName').value = u.lastName;
-    document.getElementById('email').value = u.email;
-    document.getElementById('phone').value = u.phone || '';
-    document.getElementById('gradeLevel').value = u.gradeLevel;
-    document.getElementById('organization').value = u.organization;
-
+    if (pageConfig.storageKey === 'club_users') {
+        document.getElementById('firstName').value = u.firstName;
+        document.getElementById('lastName').value = u.lastName;
+        document.getElementById('email').value = u.email;
+        document.getElementById('phone').value = u.phone || '';
+        document.getElementById('gradeLevel').value = u.gradeLevel;
+        document.getElementById('organization').value = u.organization;
+    } else {
+        document.getElementById('eventName').value = e.eventName;
+        document.getElementById('eventCategory').value = e.eventCategory;
+        document.getElementById('eventDuration').value = e.eventDuration || '';
+        document.getElementById('admissionFee').value = e.admissionFee || '';
+        document.getElementById('locationRoomNumber').value = e.locationRoomNumber;
+}
     editingIndex = index;
     document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
     document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });
