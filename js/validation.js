@@ -265,7 +265,7 @@ function filterUsers() {
     const userCardContainer = document.getElementById('userCard');
 
     if (filteredUsers.length === 0) {
-        userCardContainer.innerHTML = '<p>No matching users found.</p>';
+        userCardContainer.innerHTML = '<p class="text-danger text-center">No matching users found.</p>';
         return;
     }
 
