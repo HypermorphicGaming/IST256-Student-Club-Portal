@@ -69,6 +69,21 @@ function validateField(formField) {
                     isValid = false;
                     errorMessage = 'Please enter a valid email';
                 }
+                break;
+
+            case 'eventName':
+                if (value.length < 3) {
+                    isValid = false;
+                    errorMessage = 'Event name must be at least 3 characters';
+                }
+                break;
+
+            case 'locationRoomNumber':
+                if (value.length < 2) {
+                    isValid = false;
+                    errorMessage = 'Enter a valid location';
+                }
+                break;
         }
     }
 
@@ -112,6 +127,20 @@ function getFormData(form) {
     };
 }
 
+function getEventFormData(form) {
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    return {
+        eventName: data.eventName,
+        eventCategory: data.eventCategory,
+        eventDuration: data.eventDuration,
+        admissionFee: data.admissionFee,
+        locationRoomNumber: data.locationRoomNumber,
+        creationDate: new Date().toISOString()
+    };
+}
+
 function saveFormDataToLocalStorage(formData) {
     try {
         const existingUsers = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
@@ -128,6 +157,53 @@ function saveFormDataToLocalStorage(formData) {
     }
 }
 
+function renderData(data) {
+    const container = document.getElementById('userCard');
+
+    if (data.length === 0) {
+        container.innerHTML = `<p>${pageConfig.messages.emptyState}</p>`;
+        return;
+    }
+
+    let html = '';
+
+    if (pageConfig.storageKey === 'club_users') {
+        data.forEach((u, index) => {
+            html += `
+                <div class="card p-3 mb-3">
+                    <h5>${u.firstName} ${u.lastName}</h5>
+                    <p><strong>Email:</strong> ${u.email}</p>
+                    <p><strong>Phone:</strong> ${u.phone}</p>
+                    <p><strong>Organization:</strong> ${u.organization}</p>
+                    <p><strong>Grade Level:</strong> ${u.gradeLevel}</p>
+                    <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
+                </div>
+            `;
+        });
+    } else {
+        data.forEach((e, index) => {
+            html += `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>${e.eventName}</h5>
+                        <p><strong>Category:</strong> ${e.eventCategory}</p>
+                        <p><strong>Duration:</strong> ${e.eventDuration || 'N/A'}</p>
+                        <p><strong>Admission Fee:</strong> ${e.admissionFee ? e.admissionFee : 'Free'}</p>
+                        <p><strong>Location:</strong> ${e.locationRoomNumber}</p>
+                        <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    container.innerHTML = html;
+}
+
+
+// Current depricated in testing
 function displayAllUsers() {
     const userCardContainer = document.getElementById('userCard');
     if (!userCardContainer) {
@@ -174,8 +250,7 @@ function deleteUser(index) {
         else {
             console.log('Invalid user index');
         }
-
-        displayAllUsers();
+        renderData(users);
     }
     catch (error) {
         console.log('Error deleting user:', error);
@@ -190,7 +265,7 @@ function handleSignupSubmit(event) {
 
     if (!validateForm(form)) { return; }
 
-    const formData = getFormData(form);
+    const formData = window.location.pathname.includes('manageEvents') ? getEventFormData(form) : getFormData(form);
     const messageElement = document.getElementById('signupMessage');
     const messageText = document.getElementById('signupMessageText');
 
@@ -228,7 +303,8 @@ function handleSignupSubmit(event) {
         messageElement.classList.add('show');
     });
 
-    displayAllUsers();
+    const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
+    renderData(users);
 }
 
 function editUser(index) {
@@ -258,7 +334,8 @@ function editUser(index) {
 
 function initializeApp() {
     console.log('Setting Everything');
-    displayAllUsers();
+    const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
+    renderData(users);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
