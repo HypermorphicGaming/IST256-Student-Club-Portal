@@ -20,50 +20,42 @@
             <form id="signupForm" class="row g-3 needs-validation" novalidate>
 
                 <div class="col-md-6">
-                    <label for="firstName" class="form-label">First name <strong class="text-danger">*</strong></label>
-                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="John"
+                    <label for="eventName" class="form-label">Event Name <strong class="text-danger">*</strong></label>
+                    <input type="text" class="form-control" id="eventName" name="eventName" placeholder="Event name"
                         autocomplete="off" required>
-                    <div class="text-danger" id="firstNameError"></div>
+                    <div class="text-danger" id="eventNameError"></div>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="lastName" class="form-label">Last name <strong class="text-danger">*</strong></label>
-                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Doe"
-                        autocomplete="off" required>
-                    <div class="text-danger" id="lastNameError"></div>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="email" class="form-label">Email <strong class="text-danger">*</strong></label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="john_doe@example.com"
-                        autocomplete="off" required>
-                    <div class="text-danger" id="emailError"></div>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="123-456-7890"
-                        autocomplete="off">
-                    <div class="text-danger" id="phoneError"></div>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="organization" class="form-label">Organization <strong class="text-danger">*</strong></label>
-                    <input type="text" class="form-control" id="organization" name="organization" autocomplete="off" required>
-                    <div class="text-danger" id="organizationError"></div>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="gradeLevel" class="form-label">Grade Level <strong
-                            class="text-danger">*</strong></label>
-                    <select class="form-select" id="gradeLevel" name="gradeLevel" required>
+                    <label for="eventCategory" class="form-label">Event Type/Category <strong class="text-danger">*</strong></label>
+                    <select class="form-select" id="eventCategory" name="eventCategory" required>
                         <option value="">Choose...</option>
-                        <option value="freshman">Freshman</option>
-                        <option value="sophomore">Sophomore</option>
-                        <option value="junior">Junior</option>
-                        <option value="senior">Senior</option>
+                        <option value="social">Social</option>
+                        <option value="meeting">Meeting</option>
+                        <option value="professional">Professional</option>
                     </select>
-                    <div class="text-danger" id="gradeLevelError"></div>
+                    <div class="text-danger" id="eventCategoryError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="eventDuration" class="form-label">Event Duration</label>
+                    <input type="text" class="form-control" id="eventDuration" name="eventDuration" placeholder="1 hour"
+                        autocomplete="off">
+                    <div class="text-danger" id="eventDurationError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="admissionFee" class="form-label">Admission Fee</label>
+                    <input type="text" class="form-control" id="admissionFee" name="admissionFee" placeholder="Free/$5"
+                        autocomplete="off">
+                    <div class="text-danger" id="admissionFeeError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="locationRoomNumber" class="form-label">Location/Room Number <strong class="text-danger">*</strong></label>
+                    <input type="text" class="form-control" id="locationRoomNumber" name="locationRoomNumber" placeholder="Room 201"
+                        autocomplete="off" required>
+                    <div class="text-danger" id="locationRoomNumberError"></div>
                 </div>
 
                 <div class="col-12">
