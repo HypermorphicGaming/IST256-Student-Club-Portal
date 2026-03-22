@@ -15,10 +15,7 @@ const NAVBAR_HTML = `
                     <a class="nav-link" href="home.html">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html">Clubs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="signup.html">SignUp</a>
+                    <a class="nav-link" href="manageUsers.html">Manage Users</a>
                 </li>
             </ul>
         </div>

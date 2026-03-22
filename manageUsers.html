@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Student Club Portal</title>
+    <title>Manage Users | Student Club Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         crossorigin="anonymous" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN">
     <link rel="stylesheet" href="css/styles.css">
@@ -14,7 +14,8 @@
 
     <div class="container my-5 p-5">
         <div class="card p-4 mb-4">
-            <h2 class="text-center mb-4">Sign Up</h2>
+            <h2 class="text-center mb-2">Manage Users</h2>
+            <p class="text-center text-muted mb-4">Add, update, and review student member records.</p>
 
             <form id="signupForm" class="row g-3 needs-validation" novalidate>
 
@@ -66,7 +67,7 @@
                 </div>
 
                 <div class="col-12">
-                    <button class="btn btn-primary" type="submit">Sign Up</button>
+                    <button class="btn btn-primary" type="submit">Add User</button>
                     <button class="btn btn-secondary" type="reset">Clear Form</button>
                 </div>
             </form>
@@ -74,7 +75,7 @@
 
         <div id="signupMessage" class="alert alert-success fade d-none" role="alert">
             <div class="d-flex justify-content-between align-items-center">
-                <span><strong>Success!</strong> <span id="signupMessageText"></span></span>
+                <span><strong>Status:</strong> <span id="signupMessageText"></span></span>
                 <button type="button" class="btn-close" id="signupMessageClose" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
@@ -82,7 +83,7 @@
     </div>
 
     <div class="container my-5 p-5 text-center">
-        <h3 class="mb-3">User Data</h3>
+        <h3 class="mb-3">User Directory</h3>
         <div class="my-5" id="userCard">
 
         </div>

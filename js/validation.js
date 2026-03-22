@@ -190,17 +190,17 @@ function handleSignupSubmit(event) {
             success = true;
         } catch (error) { console.log('Error updating user:', error); }
         editingIndex = -1;
-        document.querySelector('#signupForm button[type="submit"]').textContent = 'SignUp';
+        document.querySelector('#signupForm button[type="submit"]').textContent = 'Add User';
     } else {
         success = saveFormDataToLocalStorage(formData);
     }
 
     if (success) {
-        messageText.textContent = ' You successfully signed up!';
+        messageText.textContent = ' User details saved successfully.';
         messageElement.classList.remove('alert-danger');
         messageElement.classList.add('alert-success');
     } else {
-        messageText.textContent = ' Sign up failed!';
+        messageText.textContent = ' Unable to save user details.';
         messageElement.classList.remove('alert-success');
         messageElement.classList.add('alert-danger');
     }
@@ -244,6 +244,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (signupForm) {
         signupForm.addEventListener('submit', handleSignupSubmit);
+        signupForm.addEventListener('reset', () => {
+            editingIndex = -1;
+            document.querySelector('#signupForm button[type="submit"]').textContent = 'Add User';
+        });
     }
 
     initilizeApp();
