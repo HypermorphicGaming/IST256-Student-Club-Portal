@@ -15,6 +15,10 @@ const getPageConfig = () => {
 
 let pageConfig = null;
 
+function getDefaultSubmitButtonText() {
+    return pageConfig && pageConfig.storageKey === 'club_events' ? 'Add Event' : 'Add User';
+}
+
 function updateField(formField, errorElement, isValid, errorMessage) {
     if (isValid) {
         formField.classList.add('is-valid');
@@ -281,7 +285,7 @@ function handleSignupSubmit(event) {
             success = true;
         } catch (error) { console.log('Error updating user:', error); }
         editingIndex = -1;
-        document.querySelector('#signupForm button[type="submit"]').textContent = 'Add User';
+        document.querySelector('#signupForm button[type="submit"]').textContent = getDefaultSubmitButtonText();
     } else {
         success = saveFormDataToLocalStorage(formData);
     }
@@ -348,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
         signupForm.addEventListener('submit', handleSignupSubmit);
         signupForm.addEventListener('reset', () => {
             editingIndex = -1;
-            document.querySelector('#signupForm button[type="submit"]').textContent = 'Add User';
+            document.querySelector('#signupForm button[type="submit"]').textContent = getDefaultSubmitButtonText();
         });
     }
 
