@@ -170,14 +170,16 @@ function renderData(data) {
     if (pageConfig.storageKey === 'club_users') {
         data.forEach((u, index) => {
             html += `
-                <div class="card p-3 mb-3">
-                    <h5>${u.firstName} ${u.lastName}</h5>
-                    <p><strong>Email:</strong> ${u.email}</p>
-                    <p><strong>Phone:</strong> ${u.phone}</p>
-                    <p><strong>Organization:</strong> ${u.organization}</p>
-                    <p><strong>Grade Level:</strong> ${u.gradeLevel}</p>
-                    <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
-                    <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>${u.firstName} ${u.lastName}</h5>
+                        <p><strong>Email:</strong> ${u.email}</p>
+                        <p><strong>Phone:</strong> ${u.phone}</p>
+                        <p><strong>Organization:</strong> ${u.organization}</p>
+                        <p><strong>Grade Level:</strong> ${u.gradeLevel}</p>
+                        <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
+                    </div>
                 </div>
             `;
         });
