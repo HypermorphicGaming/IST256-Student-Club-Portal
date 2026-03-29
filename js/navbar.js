@@ -21,6 +21,11 @@ const NAVBAR_HTML = `
                     <a class="nav-link" href="manageEvents.html">Manage Events</a>
                 </li>
             </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="catalogCart.html">Register</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
