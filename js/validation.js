@@ -88,6 +88,31 @@ function validateField(formField) {
                     errorMessage = 'Enter a valid location';
                 }
                 break;
+
+            case 'eventDescription':
+                if (value.length < 10) {
+                    isValid = false;
+                    errorMessage = 'Description must be at least 10 characters';
+                }
+                break;
+
+            case 'openSeats': {
+                const seats = Number.parseInt(value, 10);
+                if (!Number.isInteger(seats) || seats < 1) {
+                    isValid = false;
+                    errorMessage = 'Open seats must be a whole number greater than 0';
+                }
+                break;
+            }
+
+            case 'eventCost': {
+                const eventCost = Number.parseFloat(value);
+                if (Number.isNaN(eventCost) || eventCost < 0) {
+                    isValid = false;
+                    errorMessage = 'Registration cost cannot be negative';
+                }
+                break;
+            }
         }
     }
 
@@ -100,7 +125,7 @@ function validateForm(form) {
     // const form = document.getElementById("signupForm");
     let isValid = true;
 
-    const formInputs = form.querySelectorAll('input, select');
+    const formInputs = form.querySelectorAll('input, select, textarea');
 
     formInputs.forEach(formField => {
         if (!validateField(formField)) {
@@ -109,6 +134,19 @@ function validateForm(form) {
     });
 
     return isValid;
+}
+
+function parseEventCost(value) {
+    if (value === undefined || value === null || value === '') {
+        return 0;
+    }
+
+    if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : 0;
+    }
+
+    const numericValue = Number.parseFloat(String(value).replace(/[^\d.-]/g, ''));
+    return Number.isFinite(numericValue) ? numericValue : 0;
 }
 
 function getFormData(form) {
@@ -134,13 +172,21 @@ function getFormData(form) {
 function getEventFormData(form) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    const eventCost = parseEventCost(data.eventCost || data.admissionFee);
+    const openSeats = Number.parseInt(data.openSeats || '0', 10);
 
     return {
+        eventId: data.eventId || `event-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         eventName: data.eventName,
         eventCategory: data.eventCategory,
         eventDuration: data.eventDuration,
-        admissionFee: data.admissionFee,
+        eventDate: data.eventDate,
+        eventTime: data.eventTime,
+        eventCost,
+        admissionFee: eventCost > 0 ? `$${eventCost.toFixed(2)}` : 'Free',
+        openSeats: Number.isInteger(openSeats) && openSeats > 0 ? openSeats : 0,
         locationRoomNumber: data.locationRoomNumber,
+        eventDescription: data.eventDescription,
         creationDate: new Date().toISOString()
     };
 }
@@ -189,14 +235,19 @@ function renderData(data) {
         });
     } else {
         data.forEach((e, index) => {
+            const eventCost = parseEventCost(e.eventCost ?? e.admissionFee);
+            const openSeats = Number.parseInt(e.openSeats, 10);
             html += `
                 <div class="card mb-3">
                     <div class="card-body">
                         <h5>${e.eventName}</h5>
                         <p><strong>Category:</strong> ${e.eventCategory}</p>
+                        <p><strong>Date:</strong> ${e.eventDate || 'TBD'}${e.eventTime ? ` at ${e.eventTime}` : ''}</p>
                         <p><strong>Duration:</strong> ${e.eventDuration || 'N/A'}</p>
-                        <p><strong>Admission Fee:</strong> ${e.admissionFee ? e.admissionFee : 'Free'}</p>
+                        <p><strong>Registration Cost:</strong> ${eventCost > 0 ? `$${eventCost.toFixed(2)}` : 'Free'}</p>
+                        <p><strong>Open Seats:</strong> ${Number.isInteger(openSeats) && openSeats > 0 ? openSeats : 0}</p>
                         <p><strong>Location:</strong> ${e.locationRoomNumber}</p>
+                        <p><strong>Description:</strong> ${e.eventDescription || 'No description provided.'}</p>
                         <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
                         <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
                     </div>
@@ -280,6 +331,9 @@ function handleSignupSubmit(event) {
         try {
             const users = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
             formData.creationDate = users[editingIndex].creationDate;
+            if (pageConfig.storageKey === 'club_events') {
+                formData.eventId = users[editingIndex].eventId || formData.eventId;
+            }
             users[editingIndex] = formData;
             localStorage.setItem(pageConfig.storageKey, JSON.stringify(users));
             success = true;
@@ -330,9 +384,13 @@ function editUser(index) {
         document.getElementById('eventName').value = e.eventName;
         document.getElementById('eventCategory').value = e.eventCategory;
         document.getElementById('eventDuration').value = e.eventDuration || '';
-        document.getElementById('admissionFee').value = e.admissionFee || '';
+        document.getElementById('eventDate').value = e.eventDate || '';
+        document.getElementById('eventTime').value = e.eventTime || '';
+        document.getElementById('eventCost').value = parseEventCost(e.eventCost ?? e.admissionFee).toFixed(2);
+        document.getElementById('openSeats').value = e.openSeats || '';
         document.getElementById('locationRoomNumber').value = e.locationRoomNumber;
-}
+        document.getElementById('eventDescription').value = e.eventDescription || '';
+    }
     editingIndex = index;
     document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
     document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });

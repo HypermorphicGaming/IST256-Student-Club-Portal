@@ -45,10 +45,29 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label for="admissionFee" class="form-label">Admission Fee</label>
-                    <input type="text" class="form-control" id="admissionFee" name="admissionFee" placeholder="Free/$5"
-                        autocomplete="off">
-                    <div class="text-danger" id="admissionFeeError"></div>
+                    <label for="eventDate" class="form-label">Event Date <strong class="text-danger">*</strong></label>
+                    <input type="date" class="form-control" id="eventDate" name="eventDate" required>
+                    <div class="text-danger" id="eventDateError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="eventTime" class="form-label">Start Time</label>
+                    <input type="time" class="form-control" id="eventTime" name="eventTime">
+                    <div class="text-danger" id="eventTimeError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="eventCost" class="form-label">Registration Cost (USD)</label>
+                    <input type="number" class="form-control" id="eventCost" name="eventCost" placeholder="0.00"
+                        min="0" step="0.01" autocomplete="off" value="0">
+                    <div class="text-danger" id="eventCostError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="openSeats" class="form-label">Open Seats <strong class="text-danger">*</strong></label>
+                    <input type="number" class="form-control" id="openSeats" name="openSeats" placeholder="25"
+                        min="1" step="1" autocomplete="off" required>
+                    <div class="text-danger" id="openSeatsError"></div>
                 </div>
 
                 <div class="col-md-6">
@@ -56,6 +75,13 @@
                     <input type="text" class="form-control" id="locationRoomNumber" name="locationRoomNumber" placeholder="Room 201"
                         autocomplete="off" required>
                     <div class="text-danger" id="locationRoomNumberError"></div>
+                </div>
+
+                <div class="col-12">
+                    <label for="eventDescription" class="form-label">Event Description <strong class="text-danger">*</strong></label>
+                    <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3"
+                        placeholder="Add key details attendees should know before registering." required></textarea>
+                    <div class="text-danger" id="eventDescriptionError"></div>
                 </div>
 
                 <div class="col-12">
