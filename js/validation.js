@@ -249,7 +249,6 @@ function renderData(data) {
                         <p><strong>Open Seats:</strong> ${Number.isInteger(openSeats) && openSeats > 0 ? openSeats : 0}</p>
                         <p><strong>Location:</strong> ${e.locationRoomNumber}</p>
                         <p><strong>Description:</strong> ${e.eventDescription || 'No description provided.'}</p>
-                        <button class="btn btn-success me-2 registerEventBtn" data-index="${index}">Register</button>
                         <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
                         <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
                     </div>
