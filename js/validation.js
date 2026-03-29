@@ -390,7 +390,7 @@ function editUser(index) {
         document.getElementById('eventCost').value = parseEventCost(e.eventCost ?? e.admissionFee).toFixed(2);
         document.getElementById('openSeats').value = e.openSeats || '';
         document.getElementById('locationRoomNumber').value = e.locationRoomNumber;
-}
+    }
     editingIndex = index;
     document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
     document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });
