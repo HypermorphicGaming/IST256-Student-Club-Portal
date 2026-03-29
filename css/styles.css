@@ -53,7 +53,7 @@ body {
 .hero p {
   font-size: 18px;
   color: #f8fafc;
-  max-width: 40ch;
+  white-space: nowrap;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
