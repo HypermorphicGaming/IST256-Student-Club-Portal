@@ -66,3 +66,15 @@ $("#submitRegistration").on("click", function () {
 $(document).ready(function () {
     renderCart();
 });
+
+$(document).ready(function () {
+
+    $("#searchInput").on("keyup", function () {
+        let value = $(this).val().toLowerCase();
+
+        $("#cartItems .cart-item").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+
+});
