@@ -1,17 +1,17 @@
 let editingIndex = -1;
-let eventCart = getEventCart();
+//let eventCart = getEventCart();
 
 // Page-aware configuration
 const getPageConfig = () => {
-  const isEventsPage = window.location.pathname.includes('manageEvents');
-  return {
-    storageKey: isEventsPage ? 'club_events' : 'club_users',
-    messages: {
-      emptyState: isEventsPage ? 'No events added yet.' : 'No users registered yet.',
-      saveSuccess: isEventsPage ? 'Event details saved successfully.' : 'User details saved successfully.',
-      saveError: isEventsPage ? 'Unable to save event details.' : 'Unable to save user details.'
-    }
-  };
+    const isEventsPage = window.location.pathname.includes('manageEvents');
+    return {
+        storageKey: isEventsPage ? 'club_events' : 'club_users',
+        messages: {
+            emptyState: isEventsPage ? 'No events added yet.' : 'No users registered yet.',
+            saveSuccess: isEventsPage ? 'Event details saved successfully.' : 'User details saved successfully.',
+            saveError: isEventsPage ? 'Unable to save event details.' : 'Unable to save user details.'
+        }
+    };
 };
 
 let pageConfig = null;
@@ -334,7 +334,7 @@ function editUser(index) {
         document.getElementById('eventDuration').value = e.eventDuration || '';
         document.getElementById('admissionFee').value = e.admissionFee || '';
         document.getElementById('locationRoomNumber').value = e.locationRoomNumber;
-}
+    }
     editingIndex = index;
     document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
     document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });
@@ -360,21 +360,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
     $('#searchInput').on('keyup', function () {
-    const value = $(this).val().toLowerCase();
-    const data = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
+        const value = $(this).val().toLowerCase();
+        const data = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
 
-    const filtered = data.filter(item =>
-        Object.values(item).some(val =>
-            String(val).toLowerCase().includes(value)
-        )
-    );
+        const filtered = data.filter(item =>
+            Object.values(item).some(val =>
+                String(val).toLowerCase().includes(value)
+            )
+        );
 
-    renderData(filtered);
+        renderData(filtered);
     });
-    $(document).on("click", ".registerEventBtn", function () {
-        const index = $(this).data("index");
-        addEventToCart(index);
-    });
-    eventCart = getEventCart();
-    renderEventCart();
+    // $(document).on("click", ".registerEventBtn", function () {
+    //     const index = $(this).data("index");
+    //     addEventToCart(index);
+    // });
+    // eventCart = getEventCart();
+    // renderEventCart();
 });
