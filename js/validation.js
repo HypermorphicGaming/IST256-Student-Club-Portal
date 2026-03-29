@@ -1,4 +1,5 @@
 let editingIndex = -1;
+let eventCart = getEventCart();
 
 // Page-aware configuration
 const getPageConfig = () => {
@@ -197,6 +198,7 @@ function renderData(data) {
                         <p><strong>Duration:</strong> ${e.eventDuration || 'N/A'}</p>
                         <p><strong>Admission Fee:</strong> ${e.admissionFee ? e.admissionFee : 'Free'}</p>
                         <p><strong>Location:</strong> ${e.locationRoomNumber}</p>
+                        <button class="btn btn-success me-2 registerEventBtn" data-index="${index}">Register</button>
                         <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
                         <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
                     </div>
@@ -369,4 +371,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderData(filtered);
     });
+    $(document).on("click", ".registerEventBtn", function () {
+        const index = $(this).data("index");
+        addEventToCart(index);
+    });
+    eventCart = getEventCart();
+    renderEventCart();
 });
