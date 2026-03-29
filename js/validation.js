@@ -1,16 +1,17 @@
 let editingIndex = -1;
+//let eventCart = getEventCart();
 
 // Page-aware configuration
 const getPageConfig = () => {
-  const isEventsPage = window.location.pathname.includes('manageEvents');
-  return {
-    storageKey: isEventsPage ? 'club_events' : 'club_users',
-    messages: {
-      emptyState: isEventsPage ? 'No events added yet.' : 'No users registered yet.',
-      saveSuccess: isEventsPage ? 'Event details saved successfully.' : 'User details saved successfully.',
-      saveError: isEventsPage ? 'Unable to save event details.' : 'Unable to save user details.'
-    }
-  };
+    const isEventsPage = window.location.pathname.includes('manageEvents');
+    return {
+        storageKey: isEventsPage ? 'club_events' : 'club_users',
+        messages: {
+            emptyState: isEventsPage ? 'No events added yet.' : 'No users registered yet.',
+            saveSuccess: isEventsPage ? 'Event details saved successfully.' : 'User details saved successfully.',
+            saveError: isEventsPage ? 'Unable to save event details.' : 'Unable to save user details.'
+        }
+    };
 };
 
 let pageConfig = null;
@@ -248,6 +249,7 @@ function renderData(data) {
                         <p><strong>Open Seats:</strong> ${Number.isInteger(openSeats) && openSeats > 0 ? openSeats : 0}</p>
                         <p><strong>Location:</strong> ${e.locationRoomNumber}</p>
                         <p><strong>Description:</strong> ${e.eventDescription || 'No description provided.'}</p>
+                        <button class="btn btn-success me-2 registerEventBtn" data-index="${index}">Register</button>
                         <button class="btn btn-warning me-2" onclick="editUser(${index})">Edit</button>
                         <button class="btn btn-danger" onclick="deleteUser(${index})">Delete</button>
                     </div>
@@ -389,8 +391,7 @@ function editUser(index) {
         document.getElementById('eventCost').value = parseEventCost(e.eventCost ?? e.admissionFee).toFixed(2);
         document.getElementById('openSeats').value = e.openSeats || '';
         document.getElementById('locationRoomNumber').value = e.locationRoomNumber;
-        document.getElementById('eventDescription').value = e.eventDescription || '';
-    }
+}
     editingIndex = index;
     document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
     document.getElementById('signupForm').scrollIntoView({ behavior: 'smooth' });
@@ -416,15 +417,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
     $('#searchInput').on('keyup', function () {
-    const value = $(this).val().toLowerCase();
-    const data = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
+        const value = $(this).val().toLowerCase();
+        const data = JSON.parse(localStorage.getItem(pageConfig.storageKey)) || [];
 
-    const filtered = data.filter(item =>
-        Object.values(item).some(val =>
-            String(val).toLowerCase().includes(value)
-        )
-    );
+        const filtered = data.filter(item =>
+            Object.values(item).some(val =>
+                String(val).toLowerCase().includes(value)
+            )
+        );
 
-    renderData(filtered);
+        renderData(filtered);
     });
+    // $(document).on("click", ".registerEventBtn", function () {
+    //     const index = $(this).data("index");
+    //     addEventToCart(index);
+    // });
+    // eventCart = getEventCart();
+    // renderEventCart();
 });
