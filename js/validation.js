@@ -1,7 +1,5 @@
 let editingIndex = -1;
-//let eventCart = getEventCart();
 
-// Page-aware configuration
 const getPageConfig = () => {
     const isEventsPage = window.location.pathname.includes('manageEvents');
     return {
@@ -451,10 +449,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderData(filtered);
     });
-    // $(document).on("click", ".registerEventBtn", function () {
-    //     const index = $(this).data("index");
-    //     addEventToCart(index);
-    // });
-    // eventCart = getEventCart();
-    // renderEventCart();
 });

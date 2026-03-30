@@ -20,13 +20,13 @@
 
                 <div class="col-md-6">
                     <label for="eventName" class="form-label">Event Name <strong class="text-danger">*</strong></label>
-                    <input type="text" class="form-control" id="eventName" name="eventName"
-                        autocomplete="off" required>
+                    <input type="text" class="form-control" id="eventName" name="eventName" autocomplete="off" required>
                     <div class="text-danger" id="eventNameError"></div>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="eventCategory" class="form-label">Event Type/Category <strong class="text-danger">*</strong></label>
+                    <label for="eventCategory" class="form-label">Event Type/Category <strong
+                            class="text-danger">*</strong></label>
                     <select class="form-select" id="eventCategory" name="eventCategory" required>
                         <option value="">Choose...</option>
                         <option value="social">Social</option>
@@ -41,7 +41,8 @@
                     <div class="d-flex gap-3 align-items-center">
                         <input type="range" class="form-range flex-grow-1" id="eventDuration" name="eventDuration"
                             min="15" max="180" step="15" value="60">
-                        <span id="eventDurationDisplay" class="badge bg-secondary fw-normal" style="min-width: 60px;">1h</span>
+                        <span id="eventDurationDisplay" class="badge bg-secondary fw-normal"
+                            style="min-width: 60px;">1h</span>
                     </div>
                     <div class="text-danger" id="eventDurationError"></div>
                 </div>
@@ -60,28 +61,31 @@
 
                 <div class="col-md-6">
                     <label for="eventCost" class="form-label">Registration Cost (USD)</label>
-                    <input type="number" class="form-control" id="eventCost" name="eventCost"
-                        min="0" step="0.01" autocomplete="off" value="0">
+                    <input type="number" class="form-control" id="eventCost" name="eventCost" min="0" step="0.01"
+                        autocomplete="off" value="0">
                     <div class="text-danger" id="eventCostError"></div>
                 </div>
 
                 <div class="col-md-6">
                     <label for="openSeats" class="form-label">Open Seats <strong class="text-danger">*</strong></label>
-                    <input type="number" class="form-control" id="openSeats" name="openSeats"
-                        min="1" step="1" autocomplete="off" required>
+                    <input type="number" class="form-control" id="openSeats" name="openSeats" min="1" step="1"
+                        autocomplete="off" required>
                     <div class="text-danger" id="openSeatsError"></div>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="locationRoomNumber" class="form-label">Location/Room Number <strong class="text-danger">*</strong></label>
+                    <label for="locationRoomNumber" class="form-label">Location/Room Number <strong
+                            class="text-danger">*</strong></label>
                     <input type="text" class="form-control" id="locationRoomNumber" name="locationRoomNumber"
                         autocomplete="off" required>
                     <div class="text-danger" id="locationRoomNumberError"></div>
                 </div>
 
                 <div class="col-12">
-                    <label for="eventDescription" class="form-label">Event Description <strong class="text-danger">*</strong></label>
-                    <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3" required></textarea>
+                    <label for="eventDescription" class="form-label">Event Description <strong
+                            class="text-danger">*</strong></label>
+                    <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3"
+                        required></textarea>
                     <div class="text-danger" id="eventDescriptionError"></div>
                 </div>
 
@@ -95,7 +99,8 @@
         <div id="signupMessage" class="alert alert-success fade d-none" role="alert">
             <div class="d-flex justify-content-between align-items-center">
                 <span><strong>Status:</strong> <span id="signupMessageText"></span></span>
-                <button type="button" class="btn-close" id="signupMessageClose" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" id="signupMessageClose" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
             </div>
         </div>
 
