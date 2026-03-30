@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manage Events | Student Club Portal</title>
+    <title>Student Club Portal - Manage Events</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         crossorigin="anonymous" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN">
     <link rel="stylesheet" href="css/styles.css">
@@ -15,7 +15,6 @@
     <div class="container my-5 p-5">
         <div class="card p-4 mb-4">
             <h2 class="text-center mb-2">Manage Events</h2>
-            <p class="text-center text-muted mb-4">Create, update, and review student club events.</p>
 
             <form id="signupForm" class="row g-3 needs-validation" novalidate>
 
@@ -63,7 +62,6 @@
                     <label for="eventCost" class="form-label">Registration Cost (USD)</label>
                     <input type="number" class="form-control" id="eventCost" name="eventCost"
                         min="0" step="0.01" autocomplete="off" value="0">
-                    <div class="small text-muted">Leave as 0 for free event</div>
                     <div class="text-danger" id="eventCostError"></div>
                 </div>
 
@@ -84,7 +82,6 @@
                 <div class="col-12">
                     <label for="eventDescription" class="form-label">Event Description <strong class="text-danger">*</strong></label>
                     <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3" required></textarea>
-                    <div class="small text-muted">Include key details attendees should know before registering</div>
                     <div class="text-danger" id="eventDescriptionError"></div>
                 </div>
 
@@ -125,24 +122,8 @@
     <!-- <script src="js/cart.js"></script> -->
     <script src="js/validation.js"></script>
     <script>
-        // Event Duration Slider Display
-        const updateDurationDisplay = () => {
-            const minutes = parseInt($('#eventDuration').val());
-            const hours = Math.floor(minutes / 60);
-            const mins = minutes % 60;
-            let display = '';
-            if (hours > 0) {
-                display += hours + 'h';
-                if (mins > 0) display += ' ' + mins + 'm';
-            } else {
-                display = mins + 'm';
-            }
-            $('#eventDurationDisplay').text(display);
-        };
-        
         $('#eventDuration').on('input', updateDurationDisplay);
-        // Initialize on page load
-        updateDurationDisplay();
+        $(document).ready(() => updateDurationDisplay());
     </script>
 </body>
 
