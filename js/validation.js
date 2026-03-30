@@ -150,6 +150,29 @@ function parseEventCost(value) {
     return Number.isFinite(numericValue) ? numericValue : 0;
 }
 
+function formatEventDuration(minutes) {
+    if (!minutes) return '';
+    const mins = Number.parseInt(minutes, 10);
+    if (!Number.isInteger(mins) || mins < 0) return '';
+    const hours = Math.floor(mins / 60);
+    const remainingMins = mins % 60;
+    let display = '';
+    if (hours > 0) {
+        display += hours + 'h';
+        if (remainingMins > 0) display += ' ' + remainingMins + 'm';
+    } else {
+        display = remainingMins + 'm';
+    }
+    return display;
+}
+
+function updateDurationDisplay() {
+    const durationInput = document.getElementById('eventDuration');
+    const durationDisplay = document.getElementById('eventDurationDisplay');
+    if (!durationInput || !durationDisplay) return;
+    durationDisplay.textContent = formatEventDuration(durationInput.value);
+}
+
 function getFormData(form) {
     const formData = new FormData(form);
 
@@ -244,7 +267,7 @@ function renderData(data) {
                         <h5>${e.eventName}</h5>
                         <p><strong>Category:</strong> ${e.eventCategory}</p>
                         <p><strong>Date:</strong> ${e.eventDate || 'TBD'}${e.eventTime ? ` at ${e.eventTime}` : ''}</p>
-                        <p><strong>Duration:</strong> ${e.eventDuration || 'N/A'}</p>
+                        <p><strong>Duration:</strong> ${formatEventDuration(e.eventDuration) || 'N/A'}</p>
                         <p><strong>Registration Cost:</strong> ${eventCost > 0 ? `$${eventCost.toFixed(2)}` : 'Free'}</p>
                         <p><strong>Open Seats:</strong> ${Number.isInteger(openSeats) && openSeats > 0 ? openSeats : 0}</p>
                         <p><strong>Location:</strong> ${e.locationRoomNumber}</p>
@@ -384,12 +407,13 @@ function editUser(index) {
     } else {
         document.getElementById('eventName').value = e.eventName;
         document.getElementById('eventCategory').value = e.eventCategory;
-        document.getElementById('eventDuration').value = e.eventDuration || '';
+        document.getElementById('eventDuration').value = e.eventDuration || 60;
         document.getElementById('eventDate').value = e.eventDate || '';
         document.getElementById('eventTime').value = e.eventTime || '';
         document.getElementById('eventCost').value = parseEventCost(e.eventCost ?? e.admissionFee).toFixed(2);
         document.getElementById('openSeats').value = e.openSeats || '';
         document.getElementById('locationRoomNumber').value = e.locationRoomNumber;
+        setTimeout(() => { updateDurationDisplay(); }, 0);
     }
     editingIndex = index;
     document.querySelector('#signupForm button[type="submit"]').textContent = 'Save Changes';
