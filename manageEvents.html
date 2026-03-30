@@ -21,7 +21,7 @@
 
                 <div class="col-md-6">
                     <label for="eventName" class="form-label">Event Name <strong class="text-danger">*</strong></label>
-                    <input type="text" class="form-control" id="eventName" name="eventName" placeholder="Event name"
+                    <input type="text" class="form-control" id="eventName" name="eventName"
                         autocomplete="off" required>
                     <div class="text-danger" id="eventNameError"></div>
                 </div>
@@ -39,23 +39,53 @@
 
                 <div class="col-md-6">
                     <label for="eventDuration" class="form-label">Event Duration</label>
-                    <input type="text" class="form-control" id="eventDuration" name="eventDuration" placeholder="1 hour"
-                        autocomplete="off">
+                    <div class="d-flex gap-3 align-items-center">
+                        <input type="range" class="form-range flex-grow-1" id="eventDuration" name="eventDuration"
+                            min="15" max="180" step="15" value="60">
+                        <span id="eventDurationDisplay" class="badge bg-secondary fw-normal" style="min-width: 60px;">1h</span>
+                    </div>
                     <div class="text-danger" id="eventDurationError"></div>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="admissionFee" class="form-label">Admission Fee</label>
-                    <input type="text" class="form-control" id="admissionFee" name="admissionFee" placeholder="Free/$5"
-                        autocomplete="off">
-                    <div class="text-danger" id="admissionFeeError"></div>
+                    <label for="eventDate" class="form-label">Event Date <strong class="text-danger">*</strong></label>
+                    <input type="date" class="form-control" id="eventDate" name="eventDate" required>
+                    <div class="text-danger" id="eventDateError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="eventTime" class="form-label">Start Time</label>
+                    <input type="time" class="form-control" id="eventTime" name="eventTime">
+                    <div class="text-danger" id="eventTimeError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="eventCost" class="form-label">Registration Cost (USD)</label>
+                    <input type="number" class="form-control" id="eventCost" name="eventCost"
+                        min="0" step="0.01" autocomplete="off" value="0">
+                    <div class="small text-muted">Leave as 0 for free event</div>
+                    <div class="text-danger" id="eventCostError"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="openSeats" class="form-label">Open Seats <strong class="text-danger">*</strong></label>
+                    <input type="number" class="form-control" id="openSeats" name="openSeats"
+                        min="1" step="1" autocomplete="off" required>
+                    <div class="text-danger" id="openSeatsError"></div>
                 </div>
 
                 <div class="col-md-6">
                     <label for="locationRoomNumber" class="form-label">Location/Room Number <strong class="text-danger">*</strong></label>
-                    <input type="text" class="form-control" id="locationRoomNumber" name="locationRoomNumber" placeholder="Room 201"
+                    <input type="text" class="form-control" id="locationRoomNumber" name="locationRoomNumber"
                         autocomplete="off" required>
                     <div class="text-danger" id="locationRoomNumberError"></div>
+                </div>
+
+                <div class="col-12">
+                    <label for="eventDescription" class="form-label">Event Description <strong class="text-danger">*</strong></label>
+                    <textarea class="form-control" id="eventDescription" name="eventDescription" rows="3" required></textarea>
+                    <div class="small text-muted">Include key details attendees should know before registering</div>
+                    <div class="text-danger" id="eventDescriptionError"></div>
                 </div>
 
                 <div class="col-12">
@@ -94,6 +124,26 @@
     <script src="js/navbar.js"></script>
     <!-- <script src="js/cart.js"></script> -->
     <script src="js/validation.js"></script>
+    <script>
+        // Event Duration Slider Display
+        const updateDurationDisplay = () => {
+            const minutes = parseInt($('#eventDuration').val());
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            let display = '';
+            if (hours > 0) {
+                display += hours + 'h';
+                if (mins > 0) display += ' ' + mins + 'm';
+            } else {
+                display = mins + 'm';
+            }
+            $('#eventDurationDisplay').text(display);
+        };
+        
+        $('#eventDuration').on('input', updateDurationDisplay);
+        // Initialize on page load
+        updateDurationDisplay();
+    </script>
 </body>
 
 </html>

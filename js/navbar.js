@@ -17,6 +17,11 @@ const NAVBAR_HTML = `
                     <a class="nav-link" href="index.html">Home</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="catalogCart.html">Register</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
                     <a class="nav-link" href="manageUsers.html">Manage Users</a>
                 </li>
                 <li class="nav-item">
