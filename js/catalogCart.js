@@ -1,6 +1,5 @@
 const EVENT_STORAGE_KEY = 'club_events';
 const CART_STORAGE_KEY = 'registration_cart';
-const REGISTRATION_ENDPOINT = 'https://example.com/api/registrations';
 
 let productCollection = [];
 let cart = [];
@@ -117,16 +116,15 @@ function renderProducts(productsToRender) {
 
 function renderCart() {
     const $cartItems = $('#cartItems');
-    const $emptyMessage = $('#emptyCartMessage');
 
+    clearCartMessage();
+    
     if (!cart.length) {
-        $cartItems.html('<p class="text-muted text-center">Your cart is empty</p>');
-        $emptyMessage.removeClass('d-none');
+        $cartItems.empty();
         $('#cartTotal').text('$0.00');
+        showCartMessage('secondary', 'Your cart is empty');
         return;
     }
-
-    $emptyMessage.addClass('d-none');
 
     const itemHtml = cart
         .map((item) => {
@@ -151,124 +149,45 @@ function renderCart() {
     $('#cartTotal').text(formatCurrency(total));
 }
 
-function showCheckoutMessage(type, message) {
-    const html = `
-      <div class="alert alert-${type} py-2 mb-3" role="alert">${message}</div>
-    `;
+function showCartMessage(type, message) {
+    const html = `<div class="alert alert-${type} py-2 mb-0" role="alert">${message}</div>`;
+    $('#cartMessage').html(html);
+}
 
-    $('#checkoutForm').find('.alert').remove();
-    $('#checkoutForm').prepend(html);
+function clearCartMessage() {
+    $('#cartMessage').empty();
 }
 
 function addToCart(productId) {
     const product = productCollection.find((item) => item.productId === productId);
 
     if (!product) {
-        showCheckoutMessage('danger', 'Product not found.');
+        showCartMessage('danger', 'Product not found.');
         return;
     }
 
     if (product.openSeats <= 0) {
-        showCheckoutMessage('warning', 'No open seats left for this event.');
+        showCartMessage('warning', 'No open seats left for this event.');
         return;
     }
 
     const existsInCart = cart.some((item) => item.productId === productId);
     if (existsInCart) {
-        showCheckoutMessage('warning', 'That product is already in your cart.');
+        showCartMessage('warning', 'That product is already in your cart.');
         return;
     }
 
     cart.push(product);
     saveCart();
     renderCart();
-    showCheckoutMessage('success', 'Product added to cart.');
+    showCartMessage('success', 'Product added to cart.');
 }
 
 function removeFromCart(productId) {
     cart = cart.filter((item) => item.productId !== productId);
     saveCart();
     renderCart();
-}
-
-function applyFieldValidity($field, isValid) {
-    $field.toggleClass('is-valid', isValid);
-    $field.toggleClass('is-invalid', !isValid);
-}
-
-function validateCheckoutForm() {
-    const $name = $('#customerName');
-    const $email = $('#customerEmail');
-    const $address = $('#customerAddress');
-
-    const nameValid = $name.val().trim().length >= 2;
-    const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test($email.val().trim());
-    const addressValid = $address.val().trim().length >= 5;
-
-    applyFieldValidity($name, nameValid);
-    applyFieldValidity($email, emailValid);
-    applyFieldValidity($address, addressValid);
-
-    return nameValid && emailValid && addressValid;
-}
-
-function buildCheckoutPayload() {
-    const total = cart.reduce((sum, item) => sum + parsePrice(item.price), 0);
-
-    return {
-        customer: {
-            name: $('#customerName').val().trim(),
-            email: $('#customerEmail').val().trim(),
-            address: $('#customerAddress').val().trim()
-        },
-        products: cart,
-        total,
-        createdAt: new Date().toISOString()
-    };
-}
-
-function submitCheckout(payload) {
-    return $.ajax({
-        url: REGISTRATION_ENDPOINT,
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(payload),
-        timeout: 8000
-    });
-}
-
-function applyRegistrationToOpenSeats() {
-    const events = JSON.parse(localStorage.getItem(EVENT_STORAGE_KEY)) || [];
-
-    const eventById = new Map(
-        events.map((eventRecord) => [String(eventRecord.eventId || ''), eventRecord])
-    );
-
-    for (const cartItem of cart) {
-        const eventId = String(cartItem.sourceEventId || cartItem.productId);
-        const matchingEvent = eventById.get(eventId);
-
-        if (!matchingEvent || parseOpenSeats(matchingEvent.openSeats) < 1) {
-            return false;
-        }
-    }
-
-    const updatedEvents = events.map((eventRecord) => {
-        const eventId = String(eventRecord.eventId || '');
-        const isRegistered = cart.some((item) => String(item.sourceEventId || item.productId) === eventId);
-
-        if (!isRegistered) {
-            return eventRecord;
-        }
-
-        return {
-            ...eventRecord,
-            openSeats: parseOpenSeats(eventRecord.openSeats) - 1
-        };
-    });
-
-    localStorage.setItem(EVENT_STORAGE_KEY, JSON.stringify(updatedEvents));
-    return true;
+    showCartMessage('success', 'Product removed from cart.');
 }
 
 function bindEvents() {
@@ -300,51 +219,10 @@ function bindEvents() {
         const productId = $(this).data('productId');
         removeFromCart(String(productId));
     });
-
-    $('#checkoutForm').on('submit', function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const formValid = validateCheckoutForm();
-        const cartValid = cart.length > 0;
-
-        if (!cartValid) {
-            showCheckoutMessage('warning', 'Add at least one product before checkout.');
-            return;
-        }
-
-        if (!formValid) {
-            showCheckoutMessage('danger', 'Please correct the highlighted fields.');
-            return;
-        }
-
-        const seatsUpdated = applyRegistrationToOpenSeats();
-        if (!seatsUpdated) {
-            loadProducts();
-            renderProducts(productCollection);
-            showCheckoutMessage('warning', 'One or more events are sold out. Please review open seats.');
-            return;
-        }
-
-        const payload = buildCheckoutPayload();
-
-        cart = [];
-        saveCart();
-        loadProducts();
-        renderProducts(productCollection);
-        renderCart();
-        $('#checkoutForm')[0].reset();
-        $('#checkoutForm').find('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
-        showCheckoutMessage('success', 'Registration submitted. Open seats updated.');
-
-        submitCheckout(payload).fail(function () {
-            showCheckoutMessage('warning', 'Registration saved, but API transport failed.');
-        });
-    });
 }
 
 function initCatalogCartPage() {
-    if (!$('#productGrid').length || !$('#checkoutForm').length) {
+    if (!$('#productGrid').length) {
         return;
     }
 
