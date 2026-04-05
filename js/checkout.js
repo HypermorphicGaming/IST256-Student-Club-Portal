@@ -83,38 +83,6 @@ function formatCurrency(amount) {
     return `$${amount.toFixed(2)}`;
 }
 
-function renderProducts(productsToRender) {
-    const $grid = $('#productGrid');
-
-    if (!productsToRender.length) {
-        $grid.html('<div class="col-12"><div class="alert alert-info mb-0">No events available.</div></div>');
-        return;
-    }
-
-    const cardsHtml = productsToRender
-        .map((product) => {
-            const soldOut = product.openSeats <= 0;
-            return `
-          <div class="col">
-            <div class="card h-100 shadow-sm">
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title">${product.description}</h5>
-                <p class="mb-1"><strong>ID:</strong> ${product.productId}</p>
-                <p class="mb-1"><strong>Category:</strong> ${product.category}</p>
-                <p class="mb-1"><strong>Unit:</strong> ${product.unitOfMeasure}</p>
-                <p class="mb-1"><strong>Open Seats:</strong> ${product.openSeats}</p>
-                <p class="mb-3"><strong>Price:</strong> ${formatCurrency(product.price)}</p>
-                <button class="btn btn-primary mt-auto add-to-cart" data-product-id="${product.productId}" ${soldOut ? 'disabled' : ''}>${soldOut ? 'Sold Out' : 'Add to Cart'}</button>
-              </div>
-            </div>
-          </div>
-        `;
-        })
-        .join('');
-
-    $grid.html(cardsHtml);
-}
-
 function renderCart() {
     const $cartItems = $('#cartItems');
     const $emptyMessage = $('#emptyCartMessage');
@@ -158,31 +126,6 @@ function showCheckoutMessage(type, message) {
 
     $('#checkoutForm').find('.alert').remove();
     $('#checkoutForm').prepend(html);
-}
-
-function addToCart(productId) {
-    const product = productCollection.find((item) => item.productId === productId);
-
-    if (!product) {
-        showCheckoutMessage('danger', 'Product not found.');
-        return;
-    }
-
-    if (product.openSeats <= 0) {
-        showCheckoutMessage('warning', 'No open seats left for this event.');
-        return;
-    }
-
-    const existsInCart = cart.some((item) => item.productId === productId);
-    if (existsInCart) {
-        showCheckoutMessage('warning', 'That product is already in your cart.');
-        return;
-    }
-
-    cart.push(product);
-    saveCart();
-    renderCart();
-    showCheckoutMessage('success', 'Product added to cart.');
 }
 
 function removeFromCart(productId) {
@@ -272,30 +215,6 @@ function applyRegistrationToOpenSeats() {
 }
 
 function bindEvents() {
-    $('#productSearch').on('input', function () {
-        const searchValue = $(this).val().trim().toLowerCase();
-
-        if (!searchValue) {
-            renderProducts(productCollection);
-            return;
-        }
-
-        const filtered = productCollection.filter((product) => {
-            return (
-                product.productId.toLowerCase().includes(searchValue) ||
-                product.description.toLowerCase().includes(searchValue) ||
-                product.category.toLowerCase().includes(searchValue)
-            );
-        });
-
-        renderProducts(filtered);
-    });
-
-    $('#productGrid').on('click', '.add-to-cart', function () {
-        const productId = $(this).data('productId');
-        addToCart(String(productId));
-    });
-
     $('#cartItems').on('click', '.remove-from-cart', function () {
         const productId = $(this).data('productId');
         removeFromCart(String(productId));
@@ -321,7 +240,8 @@ function bindEvents() {
         const seatsUpdated = applyRegistrationToOpenSeats();
         if (!seatsUpdated) {
             loadProducts();
-            renderProducts(productCollection);
+            loadCart();
+            renderCart();
             showCheckoutMessage('warning', 'One or more events are sold out. Please review open seats.');
             return;
         }
@@ -330,8 +250,6 @@ function bindEvents() {
 
         cart = [];
         saveCart();
-        loadProducts();
-        renderProducts(productCollection);
         renderCart();
         $('#checkoutForm')[0].reset();
         $('#checkoutForm').find('.is-valid, .is-invalid').removeClass('is-valid is-invalid');
@@ -344,13 +262,12 @@ function bindEvents() {
 }
 
 function initCatalogCartPage() {
-    if (!$('#productGrid').length || !$('#checkoutForm').length) {
+    if (!$('#checkoutForm').length) {
         return;
     }
 
     loadProducts();
     loadCart();
-    renderProducts(productCollection);
     renderCart();
     bindEvents();
 }
