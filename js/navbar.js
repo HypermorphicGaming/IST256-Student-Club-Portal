@@ -17,6 +17,9 @@ const NAVBAR_HTML = `
                 <li class="nav-item">
                     <a class="nav-link" href="catalogCart.html">Register</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="checkout.html">Checkout</a>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
