@@ -3,6 +3,8 @@ import './App.css'
 import ManageUsers from './ManageUsers';
 import CatalogCart from './CatalogCart';
 import Checkout from './Checkout';
+import Navbar from './NavBar';
+
 import ManageEvents from './ManageEvents';
 
 function Home() {
@@ -31,6 +33,7 @@ function Home() {
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<CatalogCart />} />
