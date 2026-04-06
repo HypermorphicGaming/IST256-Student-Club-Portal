@@ -1,6 +1,8 @@
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css'
+import ManageUsers from './ManageUsers';
 
-function App() {
+function Home() {
   return (
     <div className="min-vh-100 d-flex flex-column">
       <main className="container">
@@ -10,9 +12,9 @@ function App() {
         </section>
 
         <section className="dashboard d-grid gap-3">
-          <a href="catalogCart.html" className="btn btn-primary btn-lg">Register</a>
-          <a href="manageUsers.html" className="btn btn-primary btn-lg">Manage Users</a>
-          <a href="manageEvents.html" className="btn btn-primary btn-lg">Manage Events</a>
+          <Link to="/register" className="btn btn-primary btn-lg">Register</Link>
+          <Link to="/manage-users" className="btn btn-primary btn-lg">Manage Users</Link>
+          <Link to="/manage-events" className="btn btn-primary btn-lg">Manage Events</Link>
         </section>
       </main>
 
@@ -20,7 +22,18 @@ function App() {
         <p className="mb-0">&copy; 2026 Student Club Portal | IST 256 Group 1</p>
       </footer>
     </div>
-  )
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/manage-users" element={<ManageUsers />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App
