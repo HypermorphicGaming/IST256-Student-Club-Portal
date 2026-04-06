@@ -144,8 +144,23 @@ function Checkout() {
     setErrors({});
     setMessage({ type: 'success', text: 'Registration submitted. Open seats updated.' });
 
-    // In a real app, you'd submit to an API here
-    // For now, we'll just show success
+    const registrationData = {
+      customer: formData,
+      items: cart,
+      totalCost: total,
+      date: new Date().toISOString()
+    };
+
+    fetch('/api/registrations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(registrationData)
+    })
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(err => console.error(err));
   };
 
   const handleInputChange = (e) => {
