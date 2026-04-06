@@ -4,6 +4,8 @@ import ManageUsers from './ManageUsers';
 import CatalogCart from './CatalogCart';
 import Checkout from './Checkout';
 import Navbar from './NavBar';
+import ThemeFinalization from './ThemeFinalization';
+
 
 import ManageEvents from './ManageEvents';
 
@@ -40,6 +42,7 @@ function App() {
         <Route path="/manage-users" element={<ManageUsers />} />
         <Route path="/manage-events" element={<ManageEvents />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/theme-finalization" element={<ThemeFinalization />} />
       </Routes>
     </Router>
   );

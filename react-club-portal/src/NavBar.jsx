@@ -23,6 +23,9 @@ function Navbar() {
             <li className="nav-item">
               <Link className="nav-link" to="/checkout">Checkout</Link>
             </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/theme-finalization">Final Theme Options</Link>
+            </li>
           </ul>
         </div>
       </div>
