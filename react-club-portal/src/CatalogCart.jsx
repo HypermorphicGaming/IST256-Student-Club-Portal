@@ -9,8 +9,11 @@ function CatalogCart() {
 
   useEffect(() => {
     loadProducts();
-    loadCart();
   }, []);
+
+  useEffect(() => {
+    loadCart();
+  }, [products]);
 
   const parsePrice = (value) => {
     if (value === undefined || value === null || value === '') return 0;
