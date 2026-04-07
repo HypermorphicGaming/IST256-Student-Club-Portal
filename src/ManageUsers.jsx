@@ -2,19 +2,15 @@ import { useState } from 'react';
 import Footer from './components/Footer';
 import { normalizeText, safeReadArray } from './utils/productUtils';
 import { createRandomUser } from './utils/testDataUtils';
+import useTimedMessage from './hooks/useTimedMessage';
+import { createEmptyUserForm, createUserForm } from './utils/managementForms';
 
 function ManageUsers() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    organization: '',
-    gradeLevel: ''
-  });
+  const [formData, setFormData] = useState(() => createEmptyUserForm());
   const [users, setUsers] = useState(() => safeReadArray('club_users'));
+  const [editingUserId, setEditingUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [message, setMessage] = useState({ type: '', text: '' });
+  const [message, showMessage, clearMessage] = useTimedMessage({ type: '', text: '' });
   const [errors, setErrors] = useState({});
 
   const normalizeUserDraft = (draft) => ({
@@ -76,39 +72,52 @@ function ManageUsers() {
       return;
     }
 
-    const duplicateEmail = users.some((user) => normalizeText(user.email).toLowerCase() === normalizedData.email);
+    const duplicateEmail = users.some((user) => (
+      user.id !== editingUserId && normalizeText(user.email).toLowerCase() === normalizedData.email
+    ));
     if (duplicateEmail) {
-      setMessage({ type: 'warning', text: 'A user with that email already exists.' });
+      showMessage({ type: 'warning', text: 'A user with that email already exists.' });
       return;
     }
 
-    const newUser = { ...normalizedData, id: Date.now() };
-    const updatedUsers = [...users, newUser];
+    const updatedUsers = editingUserId
+      ? users.map((user) => (user.id === editingUserId ? { ...user, ...normalizedData } : user))
+      : [...users, { ...normalizedData, id: Date.now() }];
+
     setUsers(updatedUsers);
     localStorage.setItem('club_users', JSON.stringify(updatedUsers));
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      organization: '',
-      gradeLevel: ''
-    });
+    setFormData(createEmptyUserForm());
+    setEditingUserId(null);
     setErrors({});
-    setMessage({ type: 'success', text: 'User details saved successfully.' });
-    setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    showMessage({ type: 'success', text: editingUserId ? 'User updated successfully.' : 'User details saved successfully.' });
   };
 
   const handleReset = () => {
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      organization: '',
-      gradeLevel: ''
-    });
+    setFormData(createEmptyUserForm());
+    setEditingUserId(null);
     setErrors({});
+  };
+
+  const handleEditUser = (user) => {
+    setFormData(createUserForm(user));
+    setEditingUserId(user.id);
+    setErrors({});
+    showMessage({ type: 'info', text: 'Editing selected user.' });
+  };
+
+  const handleDeleteUser = (userId) => {
+    const confirmed = window.confirm('Delete this user? This cannot be undone.');
+    if (!confirmed) return;
+
+    const updatedUsers = users.filter((user) => user.id !== userId);
+    setUsers(updatedUsers);
+    localStorage.setItem('club_users', JSON.stringify(updatedUsers));
+
+    if (editingUserId === userId) {
+      handleReset();
+    }
+
+    showMessage({ type: 'success', text: 'User deleted successfully.' });
   };
 
   const handleGenerateTestUsers = () => {
@@ -116,8 +125,7 @@ function ManageUsers() {
     const updatedUsers = [...users, ...generatedUsers];
     setUsers(updatedUsers);
     localStorage.setItem('club_users', JSON.stringify(updatedUsers));
-    setMessage({ type: 'success', text: `Generated ${generatedUsers.length} test users.` });
-    setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    showMessage({ type: 'success', text: `Generated ${generatedUsers.length} test users.` });
   };
 
   const filteredUsers = users.filter(user =>
@@ -227,7 +235,7 @@ function ManageUsers() {
             </div>
 
             <div className="col-12">
-              <button className="btn btn-primary" type="submit">Add User</button>
+              <button className="btn btn-primary" type="submit">{editingUserId ? 'Update User' : 'Add User'}</button>
               <button className="btn btn-secondary" type="reset" onClick={handleReset}>Clear Form</button>
               <button className="btn btn-outline-primary" type="button" onClick={handleGenerateTestUsers}>
                 Generate Test Users
@@ -239,7 +247,7 @@ function ManageUsers() {
         {message.text && (
           <div className={`alert alert-${message.type} alert-dismissible fade show`} role="alert">
             <strong>Status:</strong> {message.text}
-            <button type="button" className="btn-close" onClick={() => setMessage({ type: '', text: '' })} aria-label="Close"></button>
+            <button type="button" className="btn-close" onClick={clearMessage} aria-label="Close"></button>
           </div>
         )}
       </div>
@@ -270,6 +278,22 @@ function ManageUsers() {
                         <strong>Organization:</strong> {user.organization}<br/>
                         <strong>Grade Level:</strong> {user.gradeLevel}
                       </p>
+                      <div className="d-flex gap-2 justify-content-center">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => handleEditUser(user)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => handleDeleteUser(user.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

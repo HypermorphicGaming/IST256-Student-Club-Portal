@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import CartItemList from './components/CartItemList';
 import {
   buildProductsFromEvents,
   buildValidCart,
@@ -149,27 +150,7 @@ function Checkout() {
                 </div>
                 <div className="card-body">
                   <div className="cart-items mb-3">
-                    {cart.length === 0 ? (
-                      <p className="text-muted text-center">Your cart is empty</p>
-                    ) : (
-                      cart.map((item) => (
-                        <div key={item.productId} className="border rounded p-2 mb-2 bg-light">
-                          <div className="d-flex justify-content-between align-items-start gap-2">
-                            <div>
-                              <div className="fw-semibold">{item.description}</div>
-                              <small className="text-muted">{item.productId} | {item.category}</small>
-                            </div>
-                            <button
-                              className="btn btn-sm btn-outline-danger"
-                              onClick={() => removeFromCart(item.productId)}
-                            >
-                              Remove
-                            </button>
-                          </div>
-                          <div className="mt-1">{formatCurrency(item.price)}</div>
-                        </div>
-                      ))
-                    )}
+                    <CartItemList items={cart} onRemove={removeFromCart} />
                   </div>
 
                 </div>

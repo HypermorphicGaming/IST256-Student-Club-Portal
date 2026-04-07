@@ -2,22 +2,15 @@ import { useState } from 'react';
 import Footer from './components/Footer';
 import { formatCurrency, normalizeText, parseOpenSeats, parsePrice, safeReadArray } from './utils/productUtils';
 import { createRandomEvent } from './utils/testDataUtils';
+import useTimedMessage from './hooks/useTimedMessage';
+import { createEmptyEventForm, createEventForm } from './utils/managementForms';
 
 function ManageEvents() {
-  const [formData, setFormData] = useState({
-    eventName: '',
-    eventCategory: '',
-    eventDuration: 60,
-    eventDate: '',
-    eventTime: '',
-    eventCost: 0,
-    openSeats: '',
-    locationRoomNumber: '',
-    eventDescription: ''
-  });
+  const [formData, setFormData] = useState(() => createEmptyEventForm());
   const [events, setEvents] = useState(() => safeReadArray('club_events'));
+  const [editingEventId, setEditingEventId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, showMessage, clearMessage] = useTimedMessage('');
   const [errors, setErrors] = useState({});
 
   const normalizeEventDraft = (draft) => ({
@@ -91,54 +84,70 @@ function ManageEvents() {
     }
 
     const duplicateEvent = events.some((event) => (
+      event.eventId !== editingEventId &&
       normalizeText(event.eventName).toLowerCase() === normalizedData.eventName.toLowerCase() &&
       normalizeText(event.eventDate) === normalizedData.eventDate &&
       normalizeText(event.eventTime) === normalizedData.eventTime
     ));
 
     if (duplicateEvent) {
-      setMessage('An event with the same name, date, and time already exists.');
+      showMessage('An event with the same name, date, and time already exists.');
       return;
     }
 
-    const newEvent = {
-      ...normalizedData,
-      eventId: `event-${Date.now()}`,
-      eventCost: normalizedData.eventCost,
-      openSeats: normalizedData.openSeats
-    };
-    const updatedEvents = [...events, newEvent];
+    const updatedEvents = editingEventId
+      ? events.map((event) => (
+          event.eventId === editingEventId
+            ? {
+                ...event,
+                ...normalizedData,
+                eventId: editingEventId,
+                eventCost: normalizedData.eventCost,
+                openSeats: normalizedData.openSeats
+              }
+            : event
+        ))
+      : [...events, {
+          ...normalizedData,
+          eventId: `event-${Date.now()}`,
+          eventCost: normalizedData.eventCost,
+          openSeats: normalizedData.openSeats
+        }];
+
     setEvents(updatedEvents);
     localStorage.setItem('club_events', JSON.stringify(updatedEvents));
-    setFormData({
-      eventName: '',
-      eventCategory: '',
-      eventDuration: 60,
-      eventDate: '',
-      eventTime: '',
-      eventCost: 0,
-      openSeats: '',
-      locationRoomNumber: '',
-      eventDescription: ''
-    });
+    setFormData(createEmptyEventForm());
+    setEditingEventId(null);
     setErrors({});
-    setMessage('Event details saved successfully.');
-    setTimeout(() => setMessage(''), 3000);
+    showMessage(editingEventId ? 'Event updated successfully.' : 'Event details saved successfully.');
   };
 
   const handleReset = () => {
-    setFormData({
-      eventName: '',
-      eventCategory: '',
-      eventDuration: 60,
-      eventDate: '',
-      eventTime: '',
-      eventCost: 0,
-      openSeats: '',
-      locationRoomNumber: '',
-      eventDescription: ''
-    });
+    setFormData(createEmptyEventForm());
+    setEditingEventId(null);
     setErrors({});
+  };
+
+  const handleEditEvent = (event) => {
+    setFormData(createEventForm(event));
+    setEditingEventId(event.eventId);
+    setErrors({});
+    showMessage('Editing selected event.');
+  };
+
+  const handleDeleteEvent = (eventId) => {
+    const confirmed = window.confirm('Delete this event? This cannot be undone.');
+    if (!confirmed) return;
+
+    const updatedEvents = events.filter((event) => event.eventId !== eventId);
+    setEvents(updatedEvents);
+    localStorage.setItem('club_events', JSON.stringify(updatedEvents));
+
+    if (editingEventId === eventId) {
+      handleReset();
+    }
+
+    showMessage('Event deleted successfully.');
   };
 
   const handleGenerateTestEvents = () => {
@@ -146,8 +155,7 @@ function ManageEvents() {
     const updatedEvents = [...events, ...generatedEvents];
     setEvents(updatedEvents);
     localStorage.setItem('club_events', JSON.stringify(updatedEvents));
-    setMessage(`Generated ${generatedEvents.length} test events.`);
-    setTimeout(() => setMessage(''), 3000);
+    showMessage(`Generated ${generatedEvents.length} test events.`);
   };
 
   const formatDuration = (minutes) => {
@@ -315,7 +323,7 @@ function ManageEvents() {
             </div>
 
             <div className="col-12">
-              <button className="btn btn-primary" type="submit">Add Event</button>
+              <button className="btn btn-primary" type="submit">{editingEventId ? 'Update Event' : 'Add Event'}</button>
               <button className="btn btn-secondary" type="reset" onClick={handleReset}>Clear Form</button>
               <button className="btn btn-outline-primary" type="button" onClick={handleGenerateTestEvents}>
                 Generate Test Events
@@ -327,7 +335,7 @@ function ManageEvents() {
         {message && (
           <div className="alert alert-success alert-dismissible fade show" role="alert">
             <strong>Status:</strong> {message}
-            <button type="button" className="btn-close" onClick={() => setMessage('')} aria-label="Close"></button>
+            <button type="button" className="btn-close" onClick={clearMessage} aria-label="Close"></button>
           </div>
         )}
       </div>
@@ -362,6 +370,22 @@ function ManageEvents() {
                         <strong>Cost:</strong> {formatCurrency(event.eventCost)}<br/>
                         <strong>Description:</strong> {event.eventDescription}
                       </p>
+                      <div className="d-flex gap-2 justify-content-center">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => handleEditEvent(event)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => handleDeleteEvent(event.eventId)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

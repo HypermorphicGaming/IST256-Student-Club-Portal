@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import CartItemList from './components/CartItemList';
 import {
   buildProductsFromEvents,
   buildValidCart,
@@ -120,29 +121,7 @@ function CatalogCart() {
                   <h5 className="mb-0">Registration Cart</h5>
                 </div>
                 <div className="card-body d-flex flex-column" style={{ minHeight: '140px' }}>
-                  <div className="d-flex flex-column gap-2">
-                    {cart.length === 0 ? (
-                      <p className="text-muted text-center">Your cart is empty</p>
-                    ) : (
-                      cart.map((item) => (
-                        <div key={item.productId} className="border rounded p-2 mb-2 bg-light">
-                          <div className="d-flex justify-content-between align-items-start gap-2">
-                            <div>
-                              <div className="fw-semibold">{item.description}</div>
-                              <small className="text-muted">{item.productId} | {item.category}</small>
-                            </div>
-                            <button
-                              className="btn btn-sm btn-outline-danger"
-                              onClick={() => removeFromCart(item.productId)}
-                            >
-                              Remove
-                            </button>
-                          </div>
-                          <div className="mt-1">{formatCurrency(item.price)}</div>
-                        </div>
-                      ))
-                    )}
-                  </div>
+                  <CartItemList items={cart} onRemove={removeFromCart} />
                   {cartMessage.text && (
                     <div className={`alert alert-${cartMessage.type} py-2 mb-0`} role="alert">
                       {cartMessage.text}
