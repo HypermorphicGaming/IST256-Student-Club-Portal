@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Footer from './components/Footer';
+import { formatCurrency, normalizeText, parseOpenSeats, parsePrice, safeReadArray } from './utils/productUtils';
+import { createRandomEvent } from './utils/testDataUtils';
 
 function ManageEvents() {
   const [formData, setFormData] = useState({
@@ -12,15 +15,22 @@ function ManageEvents() {
     locationRoomNumber: '',
     eventDescription: ''
   });
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(() => safeReadArray('club_events'));
   const [searchTerm, setSearchTerm] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const storedEvents = JSON.parse(localStorage.getItem('club_events') || '[]');
-    setEvents(storedEvents);
-  }, []);
+  const normalizeEventDraft = (draft) => ({
+    eventName: normalizeText(draft.eventName),
+    eventCategory: normalizeText(draft.eventCategory),
+    eventDuration: Number.parseInt(draft.eventDuration, 10) || 60,
+    eventDate: normalizeText(draft.eventDate),
+    eventTime: normalizeText(draft.eventTime),
+    eventCost: parsePrice(draft.eventCost),
+    openSeats: parseOpenSeats(draft.openSeats),
+    locationRoomNumber: normalizeText(draft.locationRoomNumber),
+    eventDescription: normalizeText(draft.eventDescription)
+  });
 
   const validateField = (name, value) => {
     let error = '';
@@ -68,9 +78,10 @@ function ManageEvents() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const normalizedData = normalizeEventDraft(formData);
     const newErrors = {};
-    Object.keys(formData).forEach(key => {
-      const error = validateField(key, formData[key]);
+    Object.keys(normalizedData).forEach(key => {
+      const error = validateField(key, normalizedData[key]);
       if (error) newErrors[key] = error;
     });
 
@@ -79,11 +90,22 @@ function ManageEvents() {
       return;
     }
 
+    const duplicateEvent = events.some((event) => (
+      normalizeText(event.eventName).toLowerCase() === normalizedData.eventName.toLowerCase() &&
+      normalizeText(event.eventDate) === normalizedData.eventDate &&
+      normalizeText(event.eventTime) === normalizedData.eventTime
+    ));
+
+    if (duplicateEvent) {
+      setMessage('An event with the same name, date, and time already exists.');
+      return;
+    }
+
     const newEvent = {
-      ...formData,
+      ...normalizedData,
       eventId: `event-${Date.now()}`,
-      eventCost: parseFloat(formData.eventCost) || 0,
-      openSeats: parseInt(formData.openSeats, 10)
+      eventCost: normalizedData.eventCost,
+      openSeats: normalizedData.openSeats
     };
     const updatedEvents = [...events, newEvent];
     setEvents(updatedEvents);
@@ -119,6 +141,15 @@ function ManageEvents() {
     setErrors({});
   };
 
+  const handleGenerateTestEvents = () => {
+    const generatedEvents = Array.from({ length: 3 }, () => createRandomEvent());
+    const updatedEvents = [...events, ...generatedEvents];
+    setEvents(updatedEvents);
+    localStorage.setItem('club_events', JSON.stringify(updatedEvents));
+    setMessage(`Generated ${generatedEvents.length} test events.`);
+    setTimeout(() => setMessage(''), 3000);
+  };
+
   const formatDuration = (minutes) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -135,7 +166,7 @@ function ManageEvents() {
 
   return (
     <div className="min-vh-100 d-flex flex-column">
-      <div className="container my-5 p-5">
+      <div className="container management-page__section">
         <div className="card p-4 mb-4">
           <h2 className="text-center mb-2">Manage Events</h2>
 
@@ -286,6 +317,9 @@ function ManageEvents() {
             <div className="col-12">
               <button className="btn btn-primary" type="submit">Add Event</button>
               <button className="btn btn-secondary" type="reset" onClick={handleReset}>Clear Form</button>
+              <button className="btn btn-outline-primary" type="button" onClick={handleGenerateTestEvents}>
+                Generate Test Events
+              </button>
             </div>
           </form>
         </div>
@@ -298,7 +332,7 @@ function ManageEvents() {
         )}
       </div>
 
-      <div className="container mt-1 mb-5 p-5 text-center">
+      <div className="container management-page__section management-page__directory text-center">
         <h3 className="mb-3">Event Directory</h3>
         <input
           type="text"
@@ -308,7 +342,7 @@ function ManageEvents() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div className="my-5">
+        <div className="management-page__results">
           {filteredEvents.length === 0 ? (
             <p>No events added yet.</p>
           ) : (
@@ -325,7 +359,7 @@ function ManageEvents() {
                         <strong>Duration:</strong> {formatDuration(event.eventDuration)}<br/>
                         <strong>Location:</strong> {event.locationRoomNumber}<br/>
                         <strong>Open Seats:</strong> {event.openSeats}<br/>
-                        <strong>Cost:</strong> ${parseFloat(event.eventCost).toFixed(2)}<br/>
+                        <strong>Cost:</strong> {formatCurrency(event.eventCost)}<br/>
                         <strong>Description:</strong> {event.eventDescription}
                       </p>
                     </div>
@@ -337,9 +371,7 @@ function ManageEvents() {
         </div>
       </div>
 
-      <footer className="bg-dark text-white text-center py-3 mt-auto d-flex align-items-center justify-content-center">
-        <p className="mb-0">&copy; 2026 Student Club Portal | IST 256 Group 1</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

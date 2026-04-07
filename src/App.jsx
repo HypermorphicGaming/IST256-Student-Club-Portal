@@ -1,36 +1,13 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import ManageUsers from './ManageUsers';
 import CatalogCart from './CatalogCart';
 import Checkout from './Checkout';
-import Navbar from './NavBar';
-import ThemeFinalization from './ThemeFinalization';
+import Navbar from './NavBar.jsx';
+import Home from './Home';
 
 
 import ManageEvents from './ManageEvents';
-
-function Home() {
-  return (
-    <div className="min-vh-100 d-flex flex-column">
-      <main className="container">
-        <section className="hero">
-          <h2>Welcome to the Student Club Portal</h2>
-          <p>Discover clubs, connect with members, and manage events</p>
-        </section>
-
-        <section className="dashboard d-grid gap-3">
-          <Link to="/register" className="btn btn-primary btn-lg">Register</Link>
-          <Link to="/manage-users" className="btn btn-primary btn-lg">Manage Users</Link>
-          <Link to="/manage-events" className="btn btn-primary btn-lg">Manage Events</Link>
-        </section>
-      </main>
-
-      <footer className="bg-dark text-white text-center py-3 mt-auto d-flex align-items-center justify-content-center">
-        <p className="mb-0">&copy; 2026 Student Club Portal | IST 256 Group 1</p>
-      </footer>
-    </div>
-  );
-}
 
 function App() {
   return (
@@ -42,7 +19,6 @@ function App() {
         <Route path="/manage-users" element={<ManageUsers />} />
         <Route path="/manage-events" element={<ManageEvents />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/theme-finalization" element={<ThemeFinalization />} />
       </Routes>
     </Router>
   );

@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Footer from './components/Footer';
+import { normalizeText, safeReadArray } from './utils/productUtils';
+import { createRandomUser } from './utils/testDataUtils';
 
 function ManageUsers() {
   const [formData, setFormData] = useState({
@@ -9,15 +12,19 @@ function ManageUsers() {
     organization: '',
     gradeLevel: ''
   });
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(() => safeReadArray('club_users'));
   const [searchTerm, setSearchTerm] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({ type: '', text: '' });
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const storedUsers = JSON.parse(localStorage.getItem('club_users') || '[]');
-    setUsers(storedUsers);
-  }, []);
+  const normalizeUserDraft = (draft) => ({
+    firstName: normalizeText(draft.firstName),
+    lastName: normalizeText(draft.lastName),
+    email: normalizeText(draft.email).toLowerCase(),
+    phone: normalizeText(draft.phone),
+    organization: normalizeText(draft.organization),
+    gradeLevel: normalizeText(draft.gradeLevel)
+  });
 
   const validateField = (name, value) => {
     let error = '';
@@ -27,11 +34,12 @@ function ManageUsers() {
         if (!value.trim()) error = `${name === 'firstName' ? 'First' : 'Last'} name is required.`;
         else if (value.length < 2) error = `${name === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters.`;
         break;
-      case 'email':
+      case 'email': {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value.trim()) error = 'Email is required.';
         else if (!emailRegex.test(value)) error = 'Please enter a valid email address.';
         break;
+      }
       case 'phone':
         if (value && !/^\d{10}$/.test(value.replace(/\D/g, ''))) error = 'Please enter a valid 10-digit phone number.';
         break;
@@ -56,9 +64,10 @@ function ManageUsers() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const normalizedData = normalizeUserDraft(formData);
     const newErrors = {};
-    Object.keys(formData).forEach(key => {
-      const error = validateField(key, formData[key]);
+    Object.keys(normalizedData).forEach(key => {
+      const error = validateField(key, normalizedData[key]);
       if (error) newErrors[key] = error;
     });
 
@@ -67,7 +76,13 @@ function ManageUsers() {
       return;
     }
 
-    const newUser = { ...formData, id: Date.now() };
+    const duplicateEmail = users.some((user) => normalizeText(user.email).toLowerCase() === normalizedData.email);
+    if (duplicateEmail) {
+      setMessage({ type: 'warning', text: 'A user with that email already exists.' });
+      return;
+    }
+
+    const newUser = { ...normalizedData, id: Date.now() };
     const updatedUsers = [...users, newUser];
     setUsers(updatedUsers);
     localStorage.setItem('club_users', JSON.stringify(updatedUsers));
@@ -80,8 +95,8 @@ function ManageUsers() {
       gradeLevel: ''
     });
     setErrors({});
-    setMessage('User details saved successfully.');
-    setTimeout(() => setMessage(''), 3000);
+    setMessage({ type: 'success', text: 'User details saved successfully.' });
+    setTimeout(() => setMessage({ type: '', text: '' }), 3000);
   };
 
   const handleReset = () => {
@@ -96,6 +111,15 @@ function ManageUsers() {
     setErrors({});
   };
 
+  const handleGenerateTestUsers = () => {
+    const generatedUsers = Array.from({ length: 3 }, () => createRandomUser());
+    const updatedUsers = [...users, ...generatedUsers];
+    setUsers(updatedUsers);
+    localStorage.setItem('club_users', JSON.stringify(updatedUsers));
+    setMessage({ type: 'success', text: `Generated ${generatedUsers.length} test users.` });
+    setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+  };
+
   const filteredUsers = users.filter(user =>
     `${user.firstName} ${user.lastName} ${user.email} ${user.organization}`
       .toLowerCase()
@@ -104,7 +128,7 @@ function ManageUsers() {
 
   return (
     <div className="min-vh-100 d-flex flex-column">
-      <div className="container my-5 p-5">
+      <div className="container management-page__section">
         <div className="card p-4 mb-4">
           <h2 className="text-center mb-2">Manage Users</h2>
 
@@ -205,19 +229,22 @@ function ManageUsers() {
             <div className="col-12">
               <button className="btn btn-primary" type="submit">Add User</button>
               <button className="btn btn-secondary" type="reset" onClick={handleReset}>Clear Form</button>
+              <button className="btn btn-outline-primary" type="button" onClick={handleGenerateTestUsers}>
+                Generate Test Users
+              </button>
             </div>
           </form>
         </div>
 
-        {message && (
-          <div className="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Status:</strong> {message}
-            <button type="button" className="btn-close" onClick={() => setMessage('')} aria-label="Close"></button>
+        {message.text && (
+          <div className={`alert alert-${message.type} alert-dismissible fade show`} role="alert">
+            <strong>Status:</strong> {message.text}
+            <button type="button" className="btn-close" onClick={() => setMessage({ type: '', text: '' })} aria-label="Close"></button>
           </div>
         )}
       </div>
 
-      <div className="container mt-1 mb-5 p-5 text-center">
+      <div className="container management-page__section management-page__directory text-center">
         <h3 className="mb-3">User Directory</h3>
         <input
           type="text"
@@ -227,7 +254,7 @@ function ManageUsers() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div className="my-5" id="userCard">
+        <div className="management-page__results" id="userCard">
           {filteredUsers.length === 0 ? (
             <p>No users registered yet.</p>
           ) : (
@@ -252,9 +279,7 @@ function ManageUsers() {
         </div>
       </div>
 
-      <footer className="bg-dark text-white text-center py-3 mt-auto d-flex align-items-center justify-content-center">
-        <p className="mb-0">&copy; 2026 Student Club Portal | IST 256 Group 1</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

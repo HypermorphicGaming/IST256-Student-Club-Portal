@@ -1,5 +1,5 @@
 *.DS_store
-*.vscode
+.vscode/
 
 # Node and build output
 node_modules

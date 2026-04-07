@@ -1,77 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  buildProductsFromEvents,
+  buildValidCart,
+  formatCurrency,
+  parsePrice,
+  safeReadArray
+} from './utils/productUtils';
+import Footer from './components/Footer';
 
 function CatalogCart() {
-  const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [products] = useState(() => {
+    const events = safeReadArray('club_events');
+    return buildProductsFromEvents(events);
+  });
+  const [cart, setCart] = useState(() => {
+    const events = safeReadArray('club_events');
+    const savedCart = safeReadArray('registration_cart');
+    const productCollection = buildProductsFromEvents(events);
+    const validCart = buildValidCart(savedCart, productCollection);
+    localStorage.setItem('registration_cart', JSON.stringify(validCart));
+    return validCart;
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [cartMessage, setCartMessage] = useState({ type: '', text: '' });
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  useEffect(() => {
-    loadCart();
-  }, [products]);
-
-  const parsePrice = (value) => {
-    if (value === undefined || value === null || value === '') return 0;
-    if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
-    const numericValue = Number.parseFloat(String(value).replace(/[^\d.-]/g, ''));
-    return Number.isFinite(numericValue) ? numericValue : 0;
-  };
-
-  const parseOpenSeats = (value) => {
-    const seatCount = Number.parseInt(value, 10);
-    return Number.isInteger(seatCount) && seatCount > 0 ? seatCount : 0;
-  };
-
-  const createProductDocument = (eventRecord, index) => {
-    const baseId = eventRecord.eventId || `event-${index + 1}`;
-    const description = eventRecord.eventName || eventRecord.eventDescription || '';
-
-    return {
-      productId: String(baseId),
-      description: String(description).trim(),
-      category: String(eventRecord.eventCategory || 'general').trim(),
-      unitOfMeasure: 'seat',
-      price: parsePrice(eventRecord.eventCost ?? eventRecord.admissionFee),
-      openSeats: parseOpenSeats(eventRecord.openSeats),
-      weight: eventRecord.eventDuration || '',
-      color: eventRecord.color || '',
-      sourceEventId: eventRecord.eventId || null
-    };
-  };
-
-  const validateProduct = (product) => {
-    if (!product.productId || !product.description || !product.category || !product.unitOfMeasure) return false;
-    if (typeof product.price !== 'number' || Number.isNaN(product.price) || product.price < 0) return false;
-    if (!Number.isInteger(product.openSeats) || product.openSeats < 0) return false;
-    return true;
-  };
-
-  const loadProducts = () => {
-    const events = JSON.parse(localStorage.getItem('club_events') || '[]');
-    const productCollection = events.map(createProductDocument).filter(validateProduct);
-    setProducts(productCollection);
-  };
-
-  const loadCart = () => {
-    const savedCart = JSON.parse(localStorage.getItem('registration_cart') || '[]');
-    const validCart = savedCart.filter((item) => {
-      const product = products.find((p) => p.productId === item.productId);
-      return product && product.openSeats > 0;
-    });
-    setCart(validCart);
-  };
 
   const saveCart = (newCart) => {
     localStorage.setItem('registration_cart', JSON.stringify(newCart));
     setCart(newCart);
   };
-
-  const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
 
   const addToCart = (productId) => {
     const product = products.find((item) => item.productId === productId);
@@ -209,9 +166,7 @@ function CatalogCart() {
         </div>
       </main>
 
-      <footer className="bg-dark text-white text-center py-3 mt-auto d-flex align-items-center justify-content-center">
-        <p className="mb-0">&copy; 2026 Student Club Portal | IST 256 Group 1</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

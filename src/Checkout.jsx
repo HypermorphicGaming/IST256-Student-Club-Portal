@@ -1,9 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import {
+  buildProductsFromEvents,
+  buildValidCart,
+  formatCurrency,
+  parseOpenSeats,
+  parsePrice,
+  safeReadArray
+} from './utils/productUtils';
+import Footer from './components/Footer';
 
 function Checkout() {
-  const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const events = safeReadArray('club_events');
+    const savedCart = safeReadArray('registration_cart');
+    const productCollection = buildProductsFromEvents(events);
+    const validCart = buildValidCart(savedCart, productCollection);
+    localStorage.setItem('registration_cart', JSON.stringify(validCart));
+    return validCart;
+  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,68 +26,20 @@ function Checkout() {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  useEffect(() => {
-    loadProducts();
-    loadCart();
-  }, []);
+  function hydrateCheckoutState() {
+    const events = safeReadArray('club_events');
+    const savedCart = safeReadArray('registration_cart');
+    const productCollection = buildProductsFromEvents(events);
+    const validCart = buildValidCart(savedCart, productCollection);
 
-  const parsePrice = (value) => {
-    if (value === undefined || value === null || value === '') return 0;
-    if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
-    const numericValue = Number.parseFloat(String(value).replace(/[^\d.-]/g, ''));
-    return Number.isFinite(numericValue) ? numericValue : 0;
-  };
-
-  const parseOpenSeats = (value) => {
-    const seatCount = Number.parseInt(value, 10);
-    return Number.isInteger(seatCount) && seatCount > 0 ? seatCount : 0;
-  };
-
-  const createProductDocument = (eventRecord, index) => {
-    const baseId = eventRecord.eventId || `event-${index + 1}`;
-    const description = eventRecord.eventName || eventRecord.eventDescription || '';
-
-    return {
-      productId: String(baseId),
-      description: String(description).trim(),
-      category: String(eventRecord.eventCategory || 'general').trim(),
-      unitOfMeasure: 'seat',
-      price: parsePrice(eventRecord.eventCost ?? eventRecord.admissionFee),
-      openSeats: parseOpenSeats(eventRecord.openSeats),
-      weight: eventRecord.eventDuration || '',
-      color: eventRecord.color || '',
-      sourceEventId: eventRecord.eventId || null
-    };
-  };
-
-  const validateProduct = (product) => {
-    if (!product.productId || !product.description || !product.category || !product.unitOfMeasure) return false;
-    if (typeof product.price !== 'number' || Number.isNaN(product.price) || product.price < 0) return false;
-    if (!Number.isInteger(product.openSeats) || product.openSeats < 0) return false;
-    return true;
-  };
-
-  const loadProducts = () => {
-    const events = JSON.parse(localStorage.getItem('club_events') || '[]');
-    const productCollection = events.map(createProductDocument).filter(validateProduct);
-    setProducts(productCollection);
-  };
-
-  const loadCart = () => {
-    const savedCart = JSON.parse(localStorage.getItem('registration_cart') || '[]');
-    const validCart = savedCart.filter((item) => {
-      const product = products.find((p) => p.productId === item.productId);
-      return product && product.openSeats > 0;
-    });
     setCart(validCart);
-  };
+    localStorage.setItem('registration_cart', JSON.stringify(validCart));
+  }
 
   const saveCart = (newCart) => {
     localStorage.setItem('registration_cart', JSON.stringify(newCart));
     setCart(newCart);
   };
-
-  const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
 
   const removeFromCart = (productId) => {
     const newCart = cart.filter((item) => item.productId !== productId);
@@ -92,7 +58,7 @@ function Checkout() {
   };
 
   const applyRegistrationToOpenSeats = () => {
-    const events = JSON.parse(localStorage.getItem('club_events') || '[]');
+    const events = safeReadArray('club_events');
     const eventById = new Map(
       events.map((eventRecord) => [String(eventRecord.eventId || ''), eventRecord])
     );
@@ -117,6 +83,8 @@ function Checkout() {
     return true;
   };
 
+  const total = cart.reduce((sum, item) => sum + parsePrice(item.price), 0);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -132,8 +100,7 @@ function Checkout() {
 
     const seatsUpdated = applyRegistrationToOpenSeats();
     if (!seatsUpdated) {
-      loadProducts();
-      loadCart();
+      hydrateCheckoutState();
       setMessage({ type: 'warning', text: 'One or more events are sold out. Please review open seats.' });
       return;
     }
@@ -151,16 +118,15 @@ function Checkout() {
       date: new Date().toISOString()
     };
 
-    fetch('/api/registrations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(registrationData)
-    })
-    .then(res => res.json())
-    .then(data => console.log(data))
-    .catch(err => console.error(err));
+    localStorage.setItem('club_registrations', JSON.stringify([
+      ...safeReadArray('club_registrations'),
+      registrationData
+    ]));
+
+    // Frontend-only mode keeps submission data local until an API is introduced.
+    console.log('Registration stored locally:', registrationData);
+
+    hydrateCheckoutState();
   };
 
   const handleInputChange = (e) => {
@@ -170,8 +136,6 @@ function Checkout() {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
-
-  const total = cart.reduce((sum, item) => sum + parsePrice(item.price), 0);
 
   return (
     <div className="min-vh-100 d-flex flex-column">
@@ -208,11 +172,6 @@ function Checkout() {
                     )}
                   </div>
 
-                  {cart.length === 0 && (
-                    <div className="text-center text-muted d-none">
-                      <p>No items in your cart yet</p>
-                    </div>
-                  )}
                 </div>
 
                 <div className="card-footer bg-light">
@@ -260,7 +219,7 @@ function Checkout() {
                     </div>
 
                     <div className="mb-3">
-                      <label htmlFor="address" className="form-label">Delivery Address</label>
+                      <label htmlFor="address" className="form-label">Contact Address</label>
                       <textarea
                         className={`form-control ${errors.address ? 'is-invalid' : formData.address && !errors.address ? 'is-valid' : ''}`}
                         id="address"
@@ -293,9 +252,7 @@ function Checkout() {
         </div>
       )}
 
-      <footer className="bg-dark text-white text-center py-3 mt-auto d-flex align-items-center justify-content-center">
-        <p className="mb-0">&copy; 2026 Student Club Portal | IST 256 Group 1</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

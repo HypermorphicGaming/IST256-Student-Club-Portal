@@ -1,16 +1,76 @@
-# React + Vite
+# IST256 Student Club Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Simple React + Vite portal for student club registration and management.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Home dashboard with quick navigation.
+- Event catalog with cart workflow.
+- Checkout flow that validates inputs and updates event open seats.
+- Manage users form and searchable directory.
+- Manage events form and searchable directory.
+- LocalStorage-backed persistence for frontend-only operation.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- React Router
+- Vite
+- Bootstrap 5
+- ESLint
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start the development server:
+
+```bash
+npm run dev
+```
+
+3. Open the app at:
+
+```text
+http://localhost:5173
+```
+
+## Scripts
+
+- `npm run dev`: Start Vite dev server.
+- `npm run build`: Create production build in `dist/`.
+- `npm run preview`: Preview production build locally.
+- `npm run lint`: Run ESLint checks.
+
+## Project Structure
+
+```text
+src/
+	App.jsx
+	Home.jsx
+	NavBar.jsx
+	CatalogCart.jsx
+	Checkout.jsx
+	ManageUsers.jsx
+	ManageEvents.jsx
+	components/
+		Footer.jsx
+	utils/
+		productUtils.js
+```
+
+## Data Storage Keys
+
+- `club_users`: Stored user directory records.
+- `club_events`: Stored event records.
+- `registration_cart`: Active cart entries.
+- `club_registrations`: Completed registrations.
+
+## Notes
+
+- This project currently uses localStorage instead of a backend API.
+- Build output in `dist/` is generated and should not be committed.
