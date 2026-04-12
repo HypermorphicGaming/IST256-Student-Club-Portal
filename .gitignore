@@ -2,9 +2,9 @@
 .vscode/
 
 # Node and build output
-./frontend/node_modules
-./frontend/dist
-./backend/node_modules
+node_modules
+dist
+node_modules
 
 # Logs
 logs
