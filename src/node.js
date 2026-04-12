@@ -7,15 +7,14 @@ const PORT = 3000;
 
 const FILE = 'registrations.json';
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
 function readData() {
     if (!fs.existsSync(FILE)) return [];
     try {
-        return JSON.parse(fs.readFileSync(FILE, 'utf8'));
-    } catch (err) {
+        return JSON.parse(fs.readFileSync(FILE, 'utf-8'));
+    } catch {
         return [];
     }
 }
