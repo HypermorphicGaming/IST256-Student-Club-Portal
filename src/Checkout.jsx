@@ -118,15 +118,22 @@ function Checkout() {
       totalCost: total,
       date: new Date().toISOString()
     };
-
-    localStorage.setItem('club_registrations', JSON.stringify([
-      ...safeReadArray('club_registrations'),
-      registrationData
-    ]));
-
-    // Frontend-only mode keeps submission data local until an API is introduced.
-    console.log('Registration stored locally:', registrationData);
-
+//----
+    fetch('http://localhost:3000/registrations', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(registrationData)
+})
+.then(res => res.json())
+.then(data => {
+  console.log('Saved to server:', data);
+})
+.catch(err => {
+  console.error('Server error:', err);
+});
+//--------
     hydrateCheckoutState();
   };
 
