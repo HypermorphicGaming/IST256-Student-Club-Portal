@@ -65,7 +65,9 @@ function OrderHistory() {
                     <td className="fw-semibold">{order.id}</td>
                     <td>{formatOrderDate(order)}</td>
                     <td>
-                      <span className={getStatusBadge(order.status)}>{formatOrderStatus(order.status)}</span>
+                      <span className={getStatusBadge(order.status)}>
+                        {formatOrderStatus(order.status)}
+                      </span>
                     </td>
                   </tr>
                 ))}

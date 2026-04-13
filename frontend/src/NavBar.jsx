@@ -19,6 +19,16 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="nav-item">
+            <NavLink className="nav-link px-2 px-lg-3" to="/checkout">
+              Checkout
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link px-2 px-lg-3" to="/orders">
+              Order History
+            </NavLink>
+          </li>
+          <li className="nav-item">
             <NavLink className="nav-link px-2 px-lg-3" to="/manage-users">
               Manage Users
             </NavLink>
@@ -26,16 +36,6 @@ function Navbar() {
           <li className="nav-item">
             <NavLink className="nav-link px-2 px-lg-3" to="/manage-events">
               Manage Events
-            </NavLink>
-          </li>
-          <li className="nav-item">
-            <NavLink className="nav-link px-2 px-lg-3" to="/checkout">
-              Checkout
-            </NavLink>
-          </li>
-          <li className="nav-item">
-            <NavLink className="nav-link px-2 px-lg-3" to="/orders">
-              Registration History
             </NavLink>
           </li>
           <li className="nav-item">

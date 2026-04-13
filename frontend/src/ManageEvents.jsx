@@ -98,7 +98,10 @@ function ManageEvents() {
     )
 
     if (duplicateEvent) {
-      showMessage({ type: 'warning', text: 'An event with the same name, date, and time already exists.' })
+      showMessage({
+        type: 'warning',
+        text: 'An event with the same name, date, and time already exists.',
+      })
       return
     }
 
