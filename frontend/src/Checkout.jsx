@@ -10,6 +10,8 @@ import {
 } from './utils/productUtils';
 import Footer from './components/Footer';
 
+const ORDERS_API_URL = 'http://localhost:3000/api/orders';
+
 function Checkout() {
   const [cart, setCart] = useState(() => {
     const events = safeReadArray('club_events');
@@ -112,26 +114,27 @@ function Checkout() {
     setErrors({});
     setMessage({ type: 'success', text: 'Registration submitted. Open seats updated.' });
 
-    const registrationData = {
+    const orderPayload = {
       customer: formData,
       items: cart,
       totalCost: total,
       date: new Date().toISOString()
     };
-    fetch('http://localhost:3000/registrations', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(registrationData)
-})
-.then(res => res.json())
-.then(data => {
-  console.log('Saved to server:', data);
-})
-.catch(err => {
-  console.error('Server error:', err);
-});
+
+    fetch(ORDERS_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderPayload)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Saved to server:', data);
+      })
+      .catch((err) => {
+        console.error('Server error:', err);
+      });
     hydrateCheckoutState();
   };
 
