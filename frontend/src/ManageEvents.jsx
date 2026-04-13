@@ -136,9 +136,6 @@ function ManageEvents() {
   };
 
   const handleDeleteEvent = (eventId) => {
-    const confirmed = window.confirm('Delete this event? This cannot be undone.');
-    if (!confirmed) return;
-
     const updatedEvents = events.filter((event) => event.eventId !== eventId);
     setEvents(updatedEvents);
     localStorage.setItem('club_events', JSON.stringify(updatedEvents));

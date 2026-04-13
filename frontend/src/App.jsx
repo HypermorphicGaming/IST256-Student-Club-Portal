@@ -1,3 +1,4 @@
+import ApprovalPage from "./ApprovalPage";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import ManageUsers from './ManageUsers';
@@ -5,6 +6,8 @@ import CatalogCart from './CatalogCart';
 import Checkout from './Checkout';
 import Navbar from './NavBar.jsx';
 import Home from './Home';
+import OrderHistory from './OrderHistory';
+
 
 
 import ManageEvents from './ManageEvents';
@@ -14,11 +17,13 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
+        <Route path="/approval" element={<ApprovalPage />} />
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<CatalogCart />} />
         <Route path="/manage-users" element={<ManageUsers />} />
         <Route path="/manage-events" element={<ManageEvents />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders" element={<OrderHistory />} />
       </Routes>
     </Router>
   );

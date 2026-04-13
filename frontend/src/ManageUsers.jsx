@@ -106,9 +106,6 @@ function ManageUsers() {
   };
 
   const handleDeleteUser = (userId) => {
-    const confirmed = window.confirm('Delete this user? This cannot be undone.');
-    if (!confirmed) return;
-
     const updatedUsers = users.filter((user) => user.id !== userId);
     setUsers(updatedUsers);
     localStorage.setItem('club_users', JSON.stringify(updatedUsers));
