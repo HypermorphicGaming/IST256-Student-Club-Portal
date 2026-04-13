@@ -146,7 +146,7 @@ function Checkout() {
   return (
     <PageShell>
       <main className="container-fluid flex-grow-1">
-        <div className="row g-3 mt-3">
+        <div className="row g-3 mt-3 justify-content-center">
           <div className="col-lg-4">
             <aside className="cart-sidebar sticky-top" style={{ top: '1rem' }}>
               <div className="card mb-3 cart-card">
