@@ -24,6 +24,9 @@ function Navbar() {
             <li className="nav-item">
               <NavLink className="nav-link" to="/orders">Registration History</NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/approval">Admin Dashboard</NavLink>
+            </li>
         </ul>
       </div>
     </nav>
