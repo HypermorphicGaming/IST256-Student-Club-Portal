@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import Footer from './components/Footer';
+import PageShell from './components/PageShell';
 
 function Home() {
   return (
-    <div className="min-vh-100 d-flex flex-column">
+    <PageShell>
       <main className="container">
         <section className="hero">
           <h2>Welcome to the Student Club Portal</h2>
@@ -16,9 +16,7 @@ function Home() {
           <Link to="/manage-events" className="btn btn-primary btn-lg">Manage Events</Link>
         </section>
       </main>
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 

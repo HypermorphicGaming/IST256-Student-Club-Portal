@@ -179,6 +179,10 @@ textarea.form-control {
   line-height: 1.4;
 }
 
+.page-shell__content {
+  width: 100%;
+}
+
 .card-header h5,
 .card-body h5,
 .card-body h2,

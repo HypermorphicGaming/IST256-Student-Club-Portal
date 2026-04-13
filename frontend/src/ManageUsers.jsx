@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Footer from './components/Footer';
+import PageShell from './components/PageShell';
 import { normalizeText, safeReadArray } from './utils/productUtils';
 import { createRandomUser } from './utils/testDataUtils';
 import useTimedMessage from './hooks/useTimedMessage';
@@ -132,7 +132,7 @@ function ManageUsers() {
   );
 
   return (
-    <div className="min-vh-100 d-flex flex-column">
+    <PageShell>
       <div className="container management-page__section">
         <div className="card p-4 mb-4">
           <h2 className="text-center mb-2">Manage Users</h2>
@@ -299,9 +299,7 @@ function ManageUsers() {
           )}
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 
