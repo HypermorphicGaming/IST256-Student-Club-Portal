@@ -8,7 +8,7 @@ import {
   parsePrice,
   safeReadArray
 } from './utils/productUtils';
-import Footer from './components/Footer';
+import PageShell from './components/PageShell';
 
 function CatalogCart() {
   const [products] = useState(() => {
@@ -66,7 +66,7 @@ function CatalogCart() {
   const total = cart.reduce((sum, item) => sum + parsePrice(item.price), 0);
 
   return (
-    <div className="min-vh-100 d-flex flex-column">
+    <PageShell>
       <main className="container-fluid flex-grow-1">
         <div className="row g-3 mt-3">
           <div className="col-lg-8">
@@ -144,9 +144,7 @@ function CatalogCart() {
           </div>
         </div>
       </main>
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 

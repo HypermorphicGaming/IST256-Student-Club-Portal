@@ -8,7 +8,7 @@ import {
   parsePrice,
   safeReadArray
 } from './utils/productUtils';
-import Footer from './components/Footer';
+import PageShell from './components/PageShell';
 
 const ORDERS_API_URL = 'http://localhost:3000/api/orders';
 
@@ -147,7 +147,7 @@ function Checkout() {
   };
 
   return (
-    <div className="min-vh-100 d-flex flex-column">
+    <PageShell>
       <main className="container-fluid flex-grow-1">
         <div className="row g-3 mt-3">
           <div className="col-lg-4">
@@ -241,8 +241,7 @@ function Checkout() {
         </div>
       )}
 
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 

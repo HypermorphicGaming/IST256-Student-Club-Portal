@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Footer from './components/Footer';
+import PageShell from './components/PageShell';
 import { formatCurrency, normalizeText, parseOpenSeats, parsePrice, safeReadArray } from './utils/productUtils';
 import { createRandomEvent } from './utils/testDataUtils';
 import useTimedMessage from './hooks/useTimedMessage';
@@ -170,7 +170,7 @@ function ManageEvents() {
   );
 
   return (
-    <div className="min-vh-100 d-flex flex-column">
+    <PageShell>
       <div className="container management-page__section">
         <div className="card p-4 mb-4">
           <h2 className="text-center mb-2">Manage Events</h2>
@@ -391,9 +391,7 @@ function ManageEvents() {
           )}
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 
