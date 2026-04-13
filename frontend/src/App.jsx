@@ -1,3 +1,4 @@
+import ApprovalPage from "./ApprovalPage";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import ManageUsers from './ManageUsers';
@@ -16,6 +17,7 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
+        <Route path="/approval" element={<ApprovalPage />} />
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<CatalogCart />} />
         <Route path="/manage-users" element={<ManageUsers />} />
