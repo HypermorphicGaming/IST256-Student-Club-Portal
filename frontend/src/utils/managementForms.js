@@ -4,8 +4,8 @@ export const createEmptyUserForm = () => ({
   email: '',
   phone: '',
   organization: '',
-  gradeLevel: ''
-});
+  gradeLevel: '',
+})
 
 export const createUserForm = (user = {}) => ({
   firstName: user.firstName || '',
@@ -13,8 +13,8 @@ export const createUserForm = (user = {}) => ({
   email: user.email || '',
   phone: user.phone || '',
   organization: user.organization || '',
-  gradeLevel: user.gradeLevel || ''
-});
+  gradeLevel: user.gradeLevel || '',
+})
 
 export const createEmptyEventForm = () => ({
   eventName: '',
@@ -25,8 +25,8 @@ export const createEmptyEventForm = () => ({
   eventCost: 0,
   openSeats: '',
   locationRoomNumber: '',
-  eventDescription: ''
-});
+  eventDescription: '',
+})
 
 export const createEventForm = (event = {}) => ({
   eventName: event.eventName || '',
@@ -37,5 +37,5 @@ export const createEventForm = (event = {}) => ({
   eventCost: event.eventCost ?? 0,
   openSeats: event.openSeats ?? '',
   locationRoomNumber: event.locationRoomNumber || '',
-  eventDescription: event.eventDescription || ''
-});
+  eventDescription: event.eventDescription || '',
+})

@@ -1,55 +1,39 @@
-import { useEffect, useState } from 'react';
-import PageShell from './components/PageShell';
-
-const ORDERS_API_URL = 'http://localhost:3000/api/orders';
+import { useEffect, useState } from 'react'
+import PageShell from './components/PageShell'
+import { fetchOrders, formatOrderDate, updateOrderStatus } from './utils/ordersApi'
 
 function ApprovalPage() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const pendingOrders = orders.filter((order) => order.status === 'pending');
-
-  function loadOrders() {
-    setLoading(true);
-    setError('');
-
-    fetch(ORDERS_API_URL)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to load orders.');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setOrders(Array.isArray(data) ? data : []);
-      })
-      .catch((fetchError) => setError(fetchError.message))
-      .finally(() => setLoading(false));
-  }
-
-  function updateStatus(id, status) {
-    fetch(`${ORDERS_API_URL}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ status })
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to update order status.');
-        }
-        return res.json();
-      })
-      .then((updatedOrder) => {
-        setOrders((currentOrders) => currentOrders.filter((order) => String(order.id) !== String(updatedOrder.id)));
-      })
-      .catch((fetchError) => setError(fetchError.message));
-  }
+  const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const pendingOrders = orders.filter((order) => order.status === 'pending')
 
   useEffect(() => {
-    loadOrders();
-  }, []);
+    async function loadOrders() {
+      try {
+        setError('')
+        setOrders(await fetchOrders())
+      } catch {
+        setError('Failed to load orders.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadOrders()
+  }, [])
+
+  async function updateStatus(id, status) {
+    try {
+      setError('')
+      const updatedOrder = await updateOrderStatus(id, status)
+      setOrders((currentOrders) =>
+        currentOrders.filter((order) => String(order.id) !== String(updatedOrder.id))
+      )
+    } catch {
+      setError('Failed to update order status.')
+    }
+  }
 
   return (
     <PageShell>
@@ -75,10 +59,11 @@ function ApprovalPage() {
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title mb-2">Order {order.id}</h5>
                     <p className="mb-1">
-                      <strong>Date:</strong> {new Date(order.createdAt || order.date || Date.now()).toLocaleString()}
+                      <strong>Date:</strong> {formatOrderDate(order)}
                     </p>
                     <p className="mb-3">
-                      <strong>Status:</strong> <span className="badge bg-warning text-dark">Pending</span>
+                      <strong>Status:</strong>{' '}
+                      <span className="badge bg-warning text-dark">Pending</span>
                     </p>
 
                     <div className="mt-auto d-flex gap-2">
@@ -103,7 +88,7 @@ function ApprovalPage() {
         )}
       </div>
     </PageShell>
-  );
+  )
 }
 
-export default ApprovalPage;
+export default ApprovalPage

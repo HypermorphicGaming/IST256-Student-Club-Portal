@@ -1,43 +1,44 @@
-import { useEffect, useState } from 'react';
-import PageShell from './components/PageShell';
-
-const ORDERS_API_URL = 'http://localhost:3000/api/orders';
+import { useEffect, useState } from 'react'
+import PageShell from './components/PageShell'
+import { fetchOrders, formatOrderDate, formatOrderStatus } from './utils/ordersApi'
 
 function OrderHistory() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch(ORDERS_API_URL)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to load orders.');
-        }
-        return res.json();
-      })
-      .then((data) => setOrders(Array.isArray(data) ? data : []))
-      .catch((fetchError) => setError(fetchError.message))
-      .finally(() => setLoading(false));
-  }, []);
+    async function loadOrders() {
+      try {
+        setError('')
+        setOrders(await fetchOrders())
+      } catch {
+        setError('Failed to load orders.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadOrders()
+  }, [])
 
   const getStatusBadge = (status) => {
     switch (status) {
       case 'approved':
-        return 'badge bg-success';
+        return 'badge bg-success'
       case 'declined':
-        return 'badge bg-danger';
+        return 'badge bg-danger'
       default:
-        return 'badge bg-warning text-dark';
+        return 'badge bg-warning text-dark'
     }
-  };
+  }
 
   return (
     <PageShell>
       <div className="container py-4">
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
           <div>
-            <h2 className="mb-1">Order History</h2>
+            <h1 className="h3 mb-1">Order History</h1>
             <p className="text-muted mb-0">All submitted orders from the local file store.</p>
           </div>
         </div>
@@ -62,11 +63,9 @@ function OrderHistory() {
                 {orders.map((order) => (
                   <tr key={order.id}>
                     <td className="fw-semibold">{order.id}</td>
-                    <td>{new Date(order.createdAt || order.date || Date.now()).toLocaleString()}</td>
+                    <td>{formatOrderDate(order)}</td>
                     <td>
-                      <span className={getStatusBadge(order.status)}>
-                        {String(order.status || 'pending').charAt(0).toUpperCase() + String(order.status || 'pending').slice(1)}
-                      </span>
+                      <span className={getStatusBadge(order.status)}>{formatOrderStatus(order.status)}</span>
                     </td>
                   </tr>
                 ))}
@@ -76,7 +75,7 @@ function OrderHistory() {
         )}
       </div>
     </PageShell>
-  );
+  )
 }
 
-export default OrderHistory;
+export default OrderHistory

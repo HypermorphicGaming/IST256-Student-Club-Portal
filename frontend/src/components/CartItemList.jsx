@@ -1,8 +1,13 @@
-import { formatCurrency } from '../utils/productUtils';
+import { formatCurrency } from '../utils/productUtils'
 
-function CartItemList({ items, onRemove, emptyText = 'Your cart is empty', className = 'd-flex flex-column gap-2' }) {
+function CartItemList({
+  items,
+  onRemove,
+  emptyText = 'Your cart is empty',
+  className = 'd-flex flex-column gap-2',
+}) {
   if (items.length === 0) {
-    return <p className="text-muted text-center">{emptyText}</p>;
+    return <p className="text-muted text-center">{emptyText}</p>
   }
 
   return (
@@ -12,7 +17,9 @@ function CartItemList({ items, onRemove, emptyText = 'Your cart is empty', class
           <div className="d-flex justify-content-between align-items-start gap-2">
             <div>
               <div className="fw-semibold">{item.description}</div>
-              <small className="text-muted">{item.productId} | {item.category}</small>
+              <small className="text-muted">
+                {item.productId} | {item.category}
+              </small>
             </div>
             <button
               className="btn btn-sm btn-outline-danger"
@@ -25,7 +32,7 @@ function CartItemList({ items, onRemove, emptyText = 'Your cart is empty', class
         </div>
       ))}
     </div>
-  );
+  )
 }
 
-export default CartItemList;
+export default CartItemList

@@ -1,69 +1,70 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import CartItemList from './components/CartItemList';
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import CartItemList from './components/CartItemList'
 import {
   buildProductsFromEvents,
   buildValidCart,
   formatCurrency,
   parsePrice,
-  safeReadArray
-} from './utils/productUtils';
-import PageShell from './components/PageShell';
+  safeReadArray,
+} from './utils/productUtils'
+import PageShell from './components/PageShell'
 
 function CatalogCart() {
   const [products] = useState(() => {
-    const events = safeReadArray('club_events');
-    return buildProductsFromEvents(events);
-  });
+    const events = safeReadArray('club_events')
+    return buildProductsFromEvents(events)
+  })
   const [cart, setCart] = useState(() => {
-    const events = safeReadArray('club_events');
-    const savedCart = safeReadArray('registration_cart');
-    const productCollection = buildProductsFromEvents(events);
-    const validCart = buildValidCart(savedCart, productCollection);
-    localStorage.setItem('registration_cart', JSON.stringify(validCart));
-    return validCart;
-  });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [cartMessage, setCartMessage] = useState({ type: '', text: '' });
+    const events = safeReadArray('club_events')
+    const savedCart = safeReadArray('registration_cart')
+    const productCollection = buildProductsFromEvents(events)
+    const validCart = buildValidCart(savedCart, productCollection)
+    localStorage.setItem('registration_cart', JSON.stringify(validCart))
+    return validCart
+  })
+  const [searchTerm, setSearchTerm] = useState('')
+  const [cartMessage, setCartMessage] = useState({ type: '', text: '' })
 
   const saveCart = (newCart) => {
-    localStorage.setItem('registration_cart', JSON.stringify(newCart));
-    setCart(newCart);
-  };
+    localStorage.setItem('registration_cart', JSON.stringify(newCart))
+    setCart(newCart)
+  }
 
   const addToCart = (productId) => {
-    const product = products.find((item) => item.productId === productId);
+    const product = products.find((item) => item.productId === productId)
     if (!product) {
-      setCartMessage({ type: 'danger', text: 'Product not found.' });
-      return;
+      setCartMessage({ type: 'danger', text: 'Product not found.' })
+      return
     }
     if (product.openSeats <= 0) {
-      setCartMessage({ type: 'warning', text: 'No open seats left for this event.' });
-      return;
+      setCartMessage({ type: 'warning', text: 'No open seats left for this event.' })
+      return
     }
-    const existsInCart = cart.some((item) => item.productId === productId);
+    const existsInCart = cart.some((item) => item.productId === productId)
     if (existsInCart) {
-      setCartMessage({ type: 'warning', text: 'That product is already in your cart.' });
-      return;
+      setCartMessage({ type: 'warning', text: 'That product is already in your cart.' })
+      return
     }
-    const newCart = [...cart, product];
-    saveCart(newCart);
-    setCartMessage({ type: 'success', text: 'Product added to cart.' });
-  };
+    const newCart = [...cart, product]
+    saveCart(newCart)
+    setCartMessage({ type: 'success', text: 'Product added to cart.' })
+  }
 
   const removeFromCart = (productId) => {
-    const newCart = cart.filter((item) => item.productId !== productId);
-    saveCart(newCart);
-    setCartMessage({ type: 'success', text: 'Product removed from cart.' });
-  };
+    const newCart = cart.filter((item) => item.productId !== productId)
+    saveCart(newCart)
+    setCartMessage({ type: 'success', text: 'Product removed from cart.' })
+  }
 
-  const filteredProducts = products.filter((product) =>
-    product.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter(
+    (product) =>
+      product.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
-  const total = cart.reduce((sum, item) => sum + parsePrice(item.price), 0);
+  const total = cart.reduce((sum, item) => sum + parsePrice(item.price), 0)
 
   return (
     <PageShell>
@@ -87,17 +88,27 @@ function CatalogCart() {
                   </div>
                 ) : (
                   filteredProducts.map((product) => {
-                    const soldOut = product.openSeats <= 0;
+                    const soldOut = product.openSeats <= 0
                     return (
                       <div key={product.productId} className="col">
                         <div className="card h-100 shadow-sm">
                           <div className="card-body d-flex flex-column">
                             <h5 className="card-title">{product.description}</h5>
-                            <p className="mb-1"><strong>ID:</strong> {product.productId}</p>
-                            <p className="mb-1"><strong>Category:</strong> {product.category}</p>
-                            <p className="mb-1"><strong>Unit:</strong> {product.unitOfMeasure}</p>
-                            <p className="mb-1"><strong>Open Seats:</strong> {product.openSeats}</p>
-                            <p className="mb-3"><strong>Price:</strong> {formatCurrency(product.price)}</p>
+                            <p className="mb-1">
+                              <strong>ID:</strong> {product.productId}
+                            </p>
+                            <p className="mb-1">
+                              <strong>Category:</strong> {product.category}
+                            </p>
+                            <p className="mb-1">
+                              <strong>Unit:</strong> {product.unitOfMeasure}
+                            </p>
+                            <p className="mb-1">
+                              <strong>Open Seats:</strong> {product.openSeats}
+                            </p>
+                            <p className="mb-3">
+                              <strong>Price:</strong> {formatCurrency(product.price)}
+                            </p>
                             <button
                               className="btn btn-primary mt-auto"
                               onClick={() => addToCart(product.productId)}
@@ -108,7 +119,7 @@ function CatalogCart() {
                           </div>
                         </div>
                       </div>
-                    );
+                    )
                   })
                 )}
               </div>
@@ -145,7 +156,7 @@ function CatalogCart() {
         </div>
       </main>
     </PageShell>
-  );
+  )
 }
 
-export default CatalogCart;
+export default CatalogCart

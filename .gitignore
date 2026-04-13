@@ -1,4 +1,3 @@
-*.DS_store
 .vscode/
 
 # Node and build output
@@ -16,7 +15,7 @@ lerna-debug.log*
 
 # Local environment files
 *.local
-*.vite
+.vite/
 
 # Common editor artifacts
 .idea

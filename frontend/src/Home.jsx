@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import PageShell from './components/PageShell';
+import { Link } from 'react-router-dom'
+import PageShell from './components/PageShell'
 
 function Home() {
   return (
@@ -11,13 +11,19 @@ function Home() {
         </section>
 
         <section className="dashboard d-grid gap-3">
-          <Link to="/register" className="btn btn-primary btn-lg">Register</Link>
-          <Link to="/manage-users" className="btn btn-primary btn-lg">Manage Users</Link>
-          <Link to="/manage-events" className="btn btn-primary btn-lg">Manage Events</Link>
+          <Link to="/register" className="btn btn-primary btn-lg">
+            Register
+          </Link>
+          <Link to="/manage-users" className="btn btn-primary btn-lg">
+            Manage Users
+          </Link>
+          <Link to="/manage-events" className="btn btn-primary btn-lg">
+            Manage Events
+          </Link>
         </section>
       </main>
     </PageShell>
-  );
+  )
 }
 
-export default Home;
+export default Home

@@ -1,17 +1,23 @@
-import { useState } from 'react';
-import PageShell from './components/PageShell';
-import { formatCurrency, normalizeText, parseOpenSeats, parsePrice, safeReadArray } from './utils/productUtils';
-import { createRandomEvent } from './utils/testDataUtils';
-import useTimedMessage from './hooks/useTimedMessage';
-import { createEmptyEventForm, createEventForm } from './utils/managementForms';
+import { useState } from 'react'
+import PageShell from './components/PageShell'
+import {
+  formatCurrency,
+  normalizeText,
+  parseOpenSeats,
+  parsePrice,
+  safeReadArray,
+} from './utils/productUtils'
+import { createRandomEvent } from './utils/testDataUtils'
+import useTimedMessage from './hooks/useTimedMessage'
+import { createEmptyEventForm, createEventForm } from './utils/managementForms'
 
 function ManageEvents() {
-  const [formData, setFormData] = useState(() => createEmptyEventForm());
-  const [events, setEvents] = useState(() => safeReadArray('club_events'));
-  const [editingEventId, setEditingEventId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [message, showMessage, clearMessage] = useTimedMessage('');
-  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState(() => createEmptyEventForm())
+  const [events, setEvents] = useState(() => safeReadArray('club_events'))
+  const [editingEventId, setEditingEventId] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [message, showMessage, clearMessage] = useTimedMessage({ type: '', text: '' })
+  const [errors, setErrors] = useState({})
 
   const normalizeEventDraft = (draft) => ({
     eventName: normalizeText(draft.eventName),
@@ -22,152 +28,159 @@ function ManageEvents() {
     eventCost: parsePrice(draft.eventCost),
     openSeats: parseOpenSeats(draft.openSeats),
     locationRoomNumber: normalizeText(draft.locationRoomNumber),
-    eventDescription: normalizeText(draft.eventDescription)
-  });
+    eventDescription: normalizeText(draft.eventDescription),
+  })
 
   const validateField = (name, value) => {
-    let error = '';
+    let error = ''
     switch (name) {
       case 'eventName':
-        if (!value.trim()) error = 'Event name is required.';
-        else if (value.length < 2) error = 'Event name must be at least 2 characters.';
-        break;
+        if (!value.trim()) error = 'Event name is required.'
+        else if (value.length < 2) error = 'Event name must be at least 2 characters.'
+        break
       case 'eventCategory':
-        if (!value) error = 'Event category is required.';
-        break;
+        if (!value) error = 'Event category is required.'
+        break
       case 'eventDate':
-        if (!value) error = 'Event date is required.';
+        if (!value) error = 'Event date is required.'
         else {
-          const selectedDate = new Date(value);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          if (selectedDate < today) error = 'Event date cannot be in the past.';
+          const selectedDate = new Date(value)
+          const today = new Date()
+          today.setHours(0, 0, 0, 0)
+          if (selectedDate < today) error = 'Event date cannot be in the past.'
         }
-        break;
+        break
       case 'eventCost':
-        if (value < 0) error = 'Event cost cannot be negative.';
-        break;
+        if (value < 0) error = 'Event cost cannot be negative.'
+        break
       case 'openSeats':
-        if (!value || value < 1) error = 'Open seats must be at least 1.';
-        break;
+        if (!value || value < 1) error = 'Open seats must be at least 1.'
+        break
       case 'locationRoomNumber':
-        if (!value.trim()) error = 'Location/Room number is required.';
-        break;
+        if (!value.trim()) error = 'Location/Room number is required.'
+        break
       case 'eventDescription':
-        if (!value.trim()) error = 'Event description is required.';
-        break;
+        if (!value.trim()) error = 'Event description is required.'
+        break
       default:
-        break;
+        break
     }
-    return error;
-  };
+    return error
+  }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    const error = validateField(name, value);
-    setErrors(prev => ({ ...prev, [name]: error }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    const error = validateField(name, value)
+    setErrors((prev) => ({ ...prev, [name]: error }))
+  }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const normalizedData = normalizeEventDraft(formData);
-    const newErrors = {};
-    Object.keys(normalizedData).forEach(key => {
-      const error = validateField(key, normalizedData[key]);
-      if (error) newErrors[key] = error;
-    });
+    e.preventDefault()
+    const normalizedData = normalizeEventDraft(formData)
+    const newErrors = {}
+    Object.keys(normalizedData).forEach((key) => {
+      const error = validateField(key, normalizedData[key])
+      if (error) newErrors[key] = error
+    })
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+      setErrors(newErrors)
+      return
     }
 
-    const duplicateEvent = events.some((event) => (
-      event.eventId !== editingEventId &&
-      normalizeText(event.eventName).toLowerCase() === normalizedData.eventName.toLowerCase() &&
-      normalizeText(event.eventDate) === normalizedData.eventDate &&
-      normalizeText(event.eventTime) === normalizedData.eventTime
-    ));
+    const duplicateEvent = events.some(
+      (event) =>
+        event.eventId !== editingEventId &&
+        normalizeText(event.eventName).toLowerCase() === normalizedData.eventName.toLowerCase() &&
+        normalizeText(event.eventDate) === normalizedData.eventDate &&
+        normalizeText(event.eventTime) === normalizedData.eventTime
+    )
 
     if (duplicateEvent) {
-      showMessage('An event with the same name, date, and time already exists.');
-      return;
+      showMessage({ type: 'warning', text: 'An event with the same name, date, and time already exists.' })
+      return
     }
 
     const updatedEvents = editingEventId
-      ? events.map((event) => (
+      ? events.map((event) =>
           event.eventId === editingEventId
             ? {
                 ...event,
                 ...normalizedData,
                 eventId: editingEventId,
                 eventCost: normalizedData.eventCost,
-                openSeats: normalizedData.openSeats
+                openSeats: normalizedData.openSeats,
               }
             : event
-        ))
-      : [...events, {
-          ...normalizedData,
-          eventId: `event-${Date.now()}`,
-          eventCost: normalizedData.eventCost,
-          openSeats: normalizedData.openSeats
-        }];
+        )
+      : [
+          ...events,
+          {
+            ...normalizedData,
+            eventId: `event-${Date.now()}`,
+            eventCost: normalizedData.eventCost,
+            openSeats: normalizedData.openSeats,
+          },
+        ]
 
-    setEvents(updatedEvents);
-    localStorage.setItem('club_events', JSON.stringify(updatedEvents));
-    setFormData(createEmptyEventForm());
-    setEditingEventId(null);
-    setErrors({});
-    showMessage(editingEventId ? 'Event updated successfully.' : 'Event details saved successfully.');
-  };
+    setEvents(updatedEvents)
+    localStorage.setItem('club_events', JSON.stringify(updatedEvents))
+    setFormData(createEmptyEventForm())
+    setEditingEventId(null)
+    setErrors({})
+    showMessage({
+      type: 'success',
+      text: editingEventId ? 'Event updated successfully.' : 'Event details saved successfully.',
+    })
+  }
 
   const handleReset = () => {
-    setFormData(createEmptyEventForm());
-    setEditingEventId(null);
-    setErrors({});
-  };
+    setFormData(createEmptyEventForm())
+    setEditingEventId(null)
+    setErrors({})
+  }
 
   const handleEditEvent = (event) => {
-    setFormData(createEventForm(event));
-    setEditingEventId(event.eventId);
-    setErrors({});
-    showMessage('Editing selected event.');
-  };
+    setFormData(createEventForm(event))
+    setEditingEventId(event.eventId)
+    setErrors({})
+    showMessage({ type: 'info', text: 'Editing selected event.' })
+  }
 
   const handleDeleteEvent = (eventId) => {
-    const updatedEvents = events.filter((event) => event.eventId !== eventId);
-    setEvents(updatedEvents);
-    localStorage.setItem('club_events', JSON.stringify(updatedEvents));
+    const updatedEvents = events.filter((event) => event.eventId !== eventId)
+    setEvents(updatedEvents)
+    localStorage.setItem('club_events', JSON.stringify(updatedEvents))
 
     if (editingEventId === eventId) {
-      handleReset();
+      handleReset()
     }
 
-    showMessage('Event deleted successfully.');
-  };
+    showMessage({ type: 'success', text: 'Event deleted successfully.' })
+  }
 
   const handleGenerateTestEvents = () => {
-    const generatedEvents = Array.from({ length: 3 }, () => createRandomEvent());
-    const updatedEvents = [...events, ...generatedEvents];
-    setEvents(updatedEvents);
-    localStorage.setItem('club_events', JSON.stringify(updatedEvents));
-    showMessage(`Generated ${generatedEvents.length} test events.`);
-  };
+    const generatedEvents = Array.from({ length: 3 }, () => createRandomEvent())
+    const updatedEvents = [...events, ...generatedEvents]
+    setEvents(updatedEvents)
+    localStorage.setItem('club_events', JSON.stringify(updatedEvents))
+    showMessage({ type: 'success', text: `Generated ${generatedEvents.length} test events.` })
+  }
 
   const formatDuration = (minutes) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours === 0) return `${mins}m`;
-    if (mins === 0) return `${hours}h`;
-    return `${hours}h ${mins}m`;
-  };
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    if (hours === 0) return `${mins}m`
+    if (mins === 0) return `${hours}h`
+    return `${hours}h ${mins}m`
+  }
 
-  const filteredEvents = events.filter(event =>
+  const filteredEvents = events.filter((event) =>
     `${event.eventName} ${event.eventDescription} ${event.eventCategory} ${event.locationRoomNumber}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
-  );
+  )
 
   return (
     <PageShell>
@@ -177,7 +190,9 @@ function ManageEvents() {
 
           <form onSubmit={handleSubmit} className="row g-3">
             <div className="col-md-6">
-              <label htmlFor="eventName" className="form-label">Event Name <strong className="text-danger">*</strong></label>
+              <label htmlFor="eventName" className="form-label">
+                Event Name <strong className="text-danger">*</strong>
+              </label>
               <input
                 type="text"
                 className={`form-control ${errors.eventName ? 'is-invalid' : formData.eventName && !errors.eventName ? 'is-valid' : ''}`}
@@ -192,7 +207,9 @@ function ManageEvents() {
             </div>
 
             <div className="col-md-6">
-              <label htmlFor="eventCategory" className="form-label">Event Type/Category <strong className="text-danger">*</strong></label>
+              <label htmlFor="eventCategory" className="form-label">
+                Event Type/Category <strong className="text-danger">*</strong>
+              </label>
               <select
                 className={`form-select ${errors.eventCategory ? 'is-invalid' : formData.eventCategory && !errors.eventCategory ? 'is-valid' : ''}`}
                 id="eventCategory"
@@ -210,7 +227,9 @@ function ManageEvents() {
             </div>
 
             <div className="col-md-6">
-              <label htmlFor="eventDuration" className="form-label">Event Duration</label>
+              <label htmlFor="eventDuration" className="form-label">
+                Event Duration
+              </label>
               <div className="d-flex gap-3 align-items-center">
                 <input
                   type="range"
@@ -231,7 +250,9 @@ function ManageEvents() {
             </div>
 
             <div className="col-md-6">
-              <label htmlFor="eventDate" className="form-label">Event Date <strong className="text-danger">*</strong></label>
+              <label htmlFor="eventDate" className="form-label">
+                Event Date <strong className="text-danger">*</strong>
+              </label>
               <input
                 type="date"
                 className={`form-control ${errors.eventDate ? 'is-invalid' : formData.eventDate && !errors.eventDate ? 'is-valid' : ''}`}
@@ -245,7 +266,9 @@ function ManageEvents() {
             </div>
 
             <div className="col-md-6">
-              <label htmlFor="eventTime" className="form-label">Start Time</label>
+              <label htmlFor="eventTime" className="form-label">
+                Start Time
+              </label>
               <input
                 type="time"
                 className={`form-control ${errors.eventTime ? 'is-invalid' : formData.eventTime && !errors.eventTime ? 'is-valid' : ''}`}
@@ -258,7 +281,9 @@ function ManageEvents() {
             </div>
 
             <div className="col-md-6">
-              <label htmlFor="eventCost" className="form-label">Registration Cost (USD)</label>
+              <label htmlFor="eventCost" className="form-label">
+                Registration Cost (USD)
+              </label>
               <input
                 type="number"
                 className={`form-control ${errors.eventCost ? 'is-invalid' : formData.eventCost !== '' && !errors.eventCost ? 'is-valid' : ''}`}
@@ -274,7 +299,9 @@ function ManageEvents() {
             </div>
 
             <div className="col-md-6">
-              <label htmlFor="openSeats" className="form-label">Open Seats <strong className="text-danger">*</strong></label>
+              <label htmlFor="openSeats" className="form-label">
+                Open Seats <strong className="text-danger">*</strong>
+              </label>
               <input
                 type="number"
                 className={`form-control ${errors.openSeats ? 'is-invalid' : formData.openSeats && !errors.openSeats ? 'is-valid' : ''}`}
@@ -291,7 +318,9 @@ function ManageEvents() {
             </div>
 
             <div className="col-md-6">
-              <label htmlFor="locationRoomNumber" className="form-label">Location/Room Number <strong className="text-danger">*</strong></label>
+              <label htmlFor="locationRoomNumber" className="form-label">
+                Location/Room Number <strong className="text-danger">*</strong>
+              </label>
               <input
                 type="text"
                 className={`form-control ${errors.locationRoomNumber ? 'is-invalid' : formData.locationRoomNumber && !errors.locationRoomNumber ? 'is-valid' : ''}`}
@@ -302,11 +331,15 @@ function ManageEvents() {
                 autoComplete="off"
                 required
               />
-              {errors.locationRoomNumber && <div className="text-danger">{errors.locationRoomNumber}</div>}
+              {errors.locationRoomNumber && (
+                <div className="text-danger">{errors.locationRoomNumber}</div>
+              )}
             </div>
 
             <div className="col-12">
-              <label htmlFor="eventDescription" className="form-label">Event Description <strong className="text-danger">*</strong></label>
+              <label htmlFor="eventDescription" className="form-label">
+                Event Description <strong className="text-danger">*</strong>
+              </label>
               <textarea
                 className={`form-control ${errors.eventDescription ? 'is-invalid' : formData.eventDescription && !errors.eventDescription ? 'is-valid' : ''}`}
                 id="eventDescription"
@@ -316,23 +349,38 @@ function ManageEvents() {
                 onChange={handleInputChange}
                 required
               />
-              {errors.eventDescription && <div className="text-danger">{errors.eventDescription}</div>}
+              {errors.eventDescription && (
+                <div className="text-danger">{errors.eventDescription}</div>
+              )}
             </div>
 
-            <div className="col-12">
-              <button className="btn btn-primary" type="submit">{editingEventId ? 'Update Event' : 'Add Event'}</button>
-              <button className="btn btn-secondary" type="reset" onClick={handleReset}>Clear Form</button>
-              <button className="btn btn-outline-primary" type="button" onClick={handleGenerateTestEvents}>
+            <div className="col-12 d-flex flex-wrap gap-2">
+              <button className="btn btn-primary" type="submit">
+                {editingEventId ? 'Update Event' : 'Add Event'}
+              </button>
+              <button className="btn btn-secondary" type="reset" onClick={handleReset}>
+                Clear Form
+              </button>
+              <button
+                className="btn btn-outline-primary"
+                type="button"
+                onClick={handleGenerateTestEvents}
+              >
                 Generate Test Events
               </button>
             </div>
           </form>
         </div>
 
-        {message && (
-          <div className="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Status:</strong> {message}
-            <button type="button" className="btn-close" onClick={clearMessage} aria-label="Close"></button>
+        {message.text && (
+          <div className={`alert alert-${message.type} alert-dismissible fade show`} role="alert">
+            <strong>Status:</strong> {message.text}
+            <button
+              type="button"
+              className="btn-close"
+              onClick={clearMessage}
+              aria-label="Close"
+            ></button>
           </div>
         )}
       </div>
@@ -352,19 +400,26 @@ function ManageEvents() {
             <p>No events added yet.</p>
           ) : (
             <div className="row">
-              {filteredEvents.map(event => (
+              {filteredEvents.map((event) => (
                 <div key={event.eventId} className="col-md-4 mb-3">
                   <div className="card">
                     <div className="card-body">
                       <h5 className="card-title">{event.eventName}</h5>
                       <p className="card-text">
-                        <strong>Category:</strong> {event.eventCategory}<br/>
-                        <strong>Date:</strong> {event.eventDate}<br/>
-                        <strong>Time:</strong> {event.eventTime || 'TBD'}<br/>
-                        <strong>Duration:</strong> {formatDuration(event.eventDuration)}<br/>
-                        <strong>Location:</strong> {event.locationRoomNumber}<br/>
-                        <strong>Open Seats:</strong> {event.openSeats}<br/>
-                        <strong>Cost:</strong> {formatCurrency(event.eventCost)}<br/>
+                        <strong>Category:</strong> {event.eventCategory}
+                        <br />
+                        <strong>Date:</strong> {event.eventDate}
+                        <br />
+                        <strong>Time:</strong> {event.eventTime || 'TBD'}
+                        <br />
+                        <strong>Duration:</strong> {formatDuration(event.eventDuration)}
+                        <br />
+                        <strong>Location:</strong> {event.locationRoomNumber}
+                        <br />
+                        <strong>Open Seats:</strong> {event.openSeats}
+                        <br />
+                        <strong>Cost:</strong> {formatCurrency(event.eventCost)}
+                        <br />
                         <strong>Description:</strong> {event.eventDescription}
                       </p>
                       <div className="d-flex gap-2 justify-content-center">
@@ -392,7 +447,7 @@ function ManageEvents() {
         </div>
       </div>
     </PageShell>
-  );
+  )
 }
 
-export default ManageEvents;
+export default ManageEvents

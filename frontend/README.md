@@ -10,6 +10,7 @@ Simple React + Vite portal for student club registration and management.
 - Manage users form and searchable directory.
 - Manage events form and searchable directory.
 - LocalStorage-backed persistence for frontend-only operation.
+- Backend order storage for approval and history workflows.
 
 ## Tech Stack
 
@@ -27,13 +28,20 @@ Simple React + Vite portal for student club registration and management.
 npm install
 ```
 
-2. Start the development server:
+2. Start the backend API (from the `backend/` folder):
+
+```bash
+npm install
+npm start
+```
+
+3. Start the frontend development server (from the `frontend/` folder):
 
 ```bash
 npm run dev
 ```
 
-3. Open the app at:
+4. Open the app at:
 
 ```text
 http://localhost:5173
@@ -68,9 +76,9 @@ src/
 - `club_users`: Stored user directory records.
 - `club_events`: Stored event records.
 - `registration_cart`: Active cart entries.
-- `club_registrations`: Completed registrations.
 
 ## Notes
 
-- This project currently uses localStorage instead of a backend API.
+- User, event, and cart state use localStorage.
+- Order approval/history uses the backend API at `http://localhost:3000/api/orders`.
 - Build output in `dist/` is generated and should not be committed.
