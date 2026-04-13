@@ -118,7 +118,6 @@ function Checkout() {
       totalCost: total,
       date: new Date().toISOString()
     };
-//----
     fetch('http://localhost:3000/registrations', {
   method: 'POST',
   headers: {
@@ -133,7 +132,6 @@ function Checkout() {
 .catch(err => {
   console.error('Server error:', err);
 });
-//--------
     hydrateCheckoutState();
   };
 
