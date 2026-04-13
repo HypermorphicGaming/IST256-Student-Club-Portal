@@ -5,6 +5,8 @@ import CatalogCart from './CatalogCart';
 import Checkout from './Checkout';
 import Navbar from './NavBar.jsx';
 import Home from './Home';
+import OrderHistory from './OrderHistory';
+
 
 
 import ManageEvents from './ManageEvents';
@@ -19,6 +21,7 @@ function App() {
         <Route path="/manage-users" element={<ManageUsers />} />
         <Route path="/manage-events" element={<ManageEvents />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders" element={<OrderHistory />} />
       </Routes>
     </Router>
   );
