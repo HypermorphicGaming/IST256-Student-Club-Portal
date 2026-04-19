@@ -103,8 +103,56 @@
     ],
     "totalCost": 0,
     "date": "2026-04-13T03:26:52.321Z",
-    "status": "pending",
+    "status": "approved",
     "createdAt": "2026-04-13T03:26:52.321Z",
-    "updatedAt": "2026-04-13T03:26:52.345Z"
+    "updatedAt": "2026-04-19T22:32:53.241Z"
+  },
+  {
+    "id": "94c10a48-5a1e-45be-90e5-ad102f4e66e1",
+    "customer": {
+      "name": "Aiden Samuel Acton",
+      "email": "aidenacton06@gmail.com",
+      "address": "3200 home street"
+    },
+    "items": [
+      {
+        "productId": "event-1776049494954-fsnq2k",
+        "description": "Member Check-In",
+        "category": "meeting",
+        "unitOfMeasure": "seat",
+        "price": 5,
+        "openSeats": 44,
+        "sourceEventId": "event-1776049494954-fsnq2k"
+      }
+    ],
+    "totalCost": 5,
+    "date": "2026-04-19T22:32:05.715Z",
+    "status": "declined",
+    "createdAt": "2026-04-19T22:32:05.715Z",
+    "updatedAt": "2026-04-19T22:32:51.814Z"
+  },
+  {
+    "id": "99175211-e8de-4ce2-b611-189f7758bcc4",
+    "customer": {
+      "name": "Aiden Samuel Acton",
+      "email": "aidenacton06@gmail.com",
+      "address": "596 Cross Creek Rd"
+    },
+    "items": [
+      {
+        "productId": "event-1776049494954-x5rrue",
+        "description": "Executive Board Meeting",
+        "category": "meeting",
+        "unitOfMeasure": "seat",
+        "price": 5,
+        "openSeats": 98,
+        "sourceEventId": "event-1776049494954-x5rrue"
+      }
+    ],
+    "totalCost": 5,
+    "date": "2026-04-19T22:47:47.233Z",
+    "status": "pending",
+    "createdAt": "2026-04-19T22:47:47.233Z",
+    "updatedAt": "2026-04-19T22:47:47.282Z"
   }
 ]
