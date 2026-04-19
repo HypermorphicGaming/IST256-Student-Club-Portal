@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import PageShell from './components/PageShell'
-import { fetchOrders, formatOrderDate, updateOrderStatus } from './utils/ordersApi'
+import PageShell from '../components/PageShell'
+import { fetchOrders, formatOrderDate, updateOrderStatus } from '../utils/ordersApi'
 
 function ApprovalPage() {
   const [orders, setOrders] = useState([])

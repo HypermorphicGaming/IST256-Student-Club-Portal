@@ -1,15 +1,17 @@
 import { useState } from 'react'
-import PageShell from './components/PageShell'
+import PageShell from '../components/PageShell'
 import {
   formatCurrency,
   normalizeText,
   parseOpenSeats,
   parsePrice,
   safeReadArray,
-} from './utils/productUtils'
-import { createRandomEvent } from './utils/testDataUtils'
-import useTimedMessage from './hooks/useTimedMessage'
-import { createEmptyEventForm, createEventForm } from './utils/managementForms'
+} from '../utils/productUtils'
+import { createRandomEvent } from '../utils/testDataUtils'
+import useTimedMessage from '../hooks/useTimedMessage'
+import { createEmptyEventForm, createEventForm } from '../utils/managementForms'
+import { buildFieldClassName } from '../utils/formValidation'
+import FormError from '../components/FormError'
 
 function ManageEvents() {
   const [formData, setFormData] = useState(() => createEmptyEventForm())
@@ -198,7 +200,7 @@ function ManageEvents() {
               </label>
               <input
                 type="text"
-                className={`form-control ${errors.eventName ? 'is-invalid' : formData.eventName && !errors.eventName ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.eventName, !!formData.eventName)}
                 id="eventName"
                 name="eventName"
                 value={formData.eventName}
@@ -206,7 +208,7 @@ function ManageEvents() {
                 autoComplete="off"
                 required
               />
-              {errors.eventName && <div className="text-danger">{errors.eventName}</div>}
+              <FormError message={errors.eventName} />
             </div>
 
             <div className="col-md-6">
@@ -214,7 +216,11 @@ function ManageEvents() {
                 Event Type/Category <strong className="text-danger">*</strong>
               </label>
               <select
-                className={`form-select ${errors.eventCategory ? 'is-invalid' : formData.eventCategory && !errors.eventCategory ? 'is-valid' : ''}`}
+                className={buildFieldClassName(
+                  'form-select',
+                  errors.eventCategory,
+                  !!formData.eventCategory
+                )}
                 id="eventCategory"
                 name="eventCategory"
                 value={formData.eventCategory}
@@ -226,7 +232,7 @@ function ManageEvents() {
                 <option value="meeting">Meeting</option>
                 <option value="professional">Professional</option>
               </select>
-              {errors.eventCategory && <div className="text-danger">{errors.eventCategory}</div>}
+              <FormError message={errors.eventCategory} />
             </div>
 
             <div className="col-md-6">
@@ -249,7 +255,7 @@ function ManageEvents() {
                   {formatDuration(formData.eventDuration)}
                 </span>
               </div>
-              {errors.eventDuration && <div className="text-danger">{errors.eventDuration}</div>}
+              <FormError message={errors.eventDuration} />
             </div>
 
             <div className="col-md-6">
@@ -258,14 +264,14 @@ function ManageEvents() {
               </label>
               <input
                 type="date"
-                className={`form-control ${errors.eventDate ? 'is-invalid' : formData.eventDate && !errors.eventDate ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.eventDate, !!formData.eventDate)}
                 id="eventDate"
                 name="eventDate"
                 value={formData.eventDate}
                 onChange={handleInputChange}
                 required
               />
-              {errors.eventDate && <div className="text-danger">{errors.eventDate}</div>}
+              <FormError message={errors.eventDate} />
             </div>
 
             <div className="col-md-6">
@@ -274,13 +280,13 @@ function ManageEvents() {
               </label>
               <input
                 type="time"
-                className={`form-control ${errors.eventTime ? 'is-invalid' : formData.eventTime && !errors.eventTime ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.eventTime, !!formData.eventTime)}
                 id="eventTime"
                 name="eventTime"
                 value={formData.eventTime}
                 onChange={handleInputChange}
               />
-              {errors.eventTime && <div className="text-danger">{errors.eventTime}</div>}
+              <FormError message={errors.eventTime} />
             </div>
 
             <div className="col-md-6">
@@ -289,7 +295,11 @@ function ManageEvents() {
               </label>
               <input
                 type="number"
-                className={`form-control ${errors.eventCost ? 'is-invalid' : formData.eventCost !== '' && !errors.eventCost ? 'is-valid' : ''}`}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.eventCost,
+                  formData.eventCost !== ''
+                )}
                 id="eventCost"
                 name="eventCost"
                 min="0"
@@ -298,7 +308,7 @@ function ManageEvents() {
                 onChange={handleInputChange}
                 autoComplete="off"
               />
-              {errors.eventCost && <div className="text-danger">{errors.eventCost}</div>}
+              <FormError message={errors.eventCost} />
             </div>
 
             <div className="col-md-6">
@@ -307,7 +317,7 @@ function ManageEvents() {
               </label>
               <input
                 type="number"
-                className={`form-control ${errors.openSeats ? 'is-invalid' : formData.openSeats && !errors.openSeats ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.openSeats, !!formData.openSeats)}
                 id="openSeats"
                 name="openSeats"
                 min="1"
@@ -317,7 +327,7 @@ function ManageEvents() {
                 autoComplete="off"
                 required
               />
-              {errors.openSeats && <div className="text-danger">{errors.openSeats}</div>}
+              <FormError message={errors.openSeats} />
             </div>
 
             <div className="col-md-6">
@@ -326,7 +336,11 @@ function ManageEvents() {
               </label>
               <input
                 type="text"
-                className={`form-control ${errors.locationRoomNumber ? 'is-invalid' : formData.locationRoomNumber && !errors.locationRoomNumber ? 'is-valid' : ''}`}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.locationRoomNumber,
+                  !!formData.locationRoomNumber
+                )}
                 id="locationRoomNumber"
                 name="locationRoomNumber"
                 value={formData.locationRoomNumber}
@@ -334,9 +348,7 @@ function ManageEvents() {
                 autoComplete="off"
                 required
               />
-              {errors.locationRoomNumber && (
-                <div className="text-danger">{errors.locationRoomNumber}</div>
-              )}
+              <FormError message={errors.locationRoomNumber} />
             </div>
 
             <div className="col-12">
@@ -344,7 +356,11 @@ function ManageEvents() {
                 Event Description <strong className="text-danger">*</strong>
               </label>
               <textarea
-                className={`form-control ${errors.eventDescription ? 'is-invalid' : formData.eventDescription && !errors.eventDescription ? 'is-valid' : ''}`}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.eventDescription,
+                  !!formData.eventDescription
+                )}
                 id="eventDescription"
                 name="eventDescription"
                 rows="3"
@@ -352,9 +368,7 @@ function ManageEvents() {
                 onChange={handleInputChange}
                 required
               />
-              {errors.eventDescription && (
-                <div className="text-danger">{errors.eventDescription}</div>
-              )}
+              <FormError message={errors.eventDescription} />
             </div>
 
             <div className="col-12 d-flex flex-wrap gap-2">

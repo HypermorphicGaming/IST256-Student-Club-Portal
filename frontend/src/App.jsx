@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import './App.css'
-import ApprovalPage from './ApprovalPage'
-import CatalogCart from './CatalogCart'
-import Checkout from './Checkout'
-import Home from './Home'
-import ManageEvents from './ManageEvents'
-import ManageUsers from './ManageUsers'
+import ApprovalPage from './pages/ApprovalPage'
+import CatalogCart from './pages/CatalogCart'
+import Checkout from './pages/Checkout'
+import Home from './pages/Home'
+import ManageEvents from './pages/ManageEvents'
+import ManageUsers from './pages/ManageUsers'
 import Navbar from './NavBar'
-import OrderHistory from './OrderHistory'
+import OrderHistory from './pages/OrderHistory'
 
 function App() {
   return (

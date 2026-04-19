@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import CartItemList from './components/CartItemList'
+import CartItemList from '../components/CartItemList'
 import {
   buildProductsFromEvents,
   buildValidCart,
@@ -7,9 +7,11 @@ import {
   parseOpenSeats,
   parsePrice,
   safeReadArray,
-} from './utils/productUtils'
-import PageShell from './components/PageShell'
-import { createOrder } from './utils/ordersApi'
+} from '../utils/productUtils'
+import PageShell from '../components/PageShell'
+import { createOrder } from '../utils/ordersApi'
+import { buildFieldClassName } from '../utils/formValidation'
+import FormError from '../components/FormError'
 
 function Checkout() {
   const [cart, setCart] = useState(() => {
@@ -179,7 +181,7 @@ function Checkout() {
                       </label>
                       <input
                         type="text"
-                        className={`form-control ${errors.name ? 'is-invalid' : formData.name && !errors.name ? 'is-valid' : ''}`}
+                        className={buildFieldClassName('form-control', errors.name, !!formData.name)}
                         id="name"
                         name="name"
                         placeholder="John Doe"
@@ -187,7 +189,7 @@ function Checkout() {
                         onChange={handleInputChange}
                         required
                       />
-                      {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+                      <FormError message={errors.name} className="invalid-feedback" />
                     </div>
 
                     <div className="mb-3">
@@ -196,7 +198,11 @@ function Checkout() {
                       </label>
                       <input
                         type="email"
-                        className={`form-control ${errors.email ? 'is-invalid' : formData.email && !errors.email ? 'is-valid' : ''}`}
+                        className={buildFieldClassName(
+                          'form-control',
+                          errors.email,
+                          !!formData.email
+                        )}
                         id="email"
                         name="email"
                         placeholder="john@example.com"
@@ -204,7 +210,7 @@ function Checkout() {
                         onChange={handleInputChange}
                         required
                       />
-                      {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+                      <FormError message={errors.email} className="invalid-feedback" />
                     </div>
 
                     <div className="mb-3">
@@ -212,7 +218,11 @@ function Checkout() {
                         Contact Address
                       </label>
                       <textarea
-                        className={`form-control ${errors.address ? 'is-invalid' : formData.address && !errors.address ? 'is-valid' : ''}`}
+                        className={buildFieldClassName(
+                          'form-control',
+                          errors.address,
+                          !!formData.address
+                        )}
                         id="address"
                         name="address"
                         rows="3"
@@ -221,7 +231,7 @@ function Checkout() {
                         onChange={handleInputChange}
                         required
                       />
-                      {errors.address && <div className="invalid-feedback">{errors.address}</div>}
+                      <FormError message={errors.address} className="invalid-feedback" />
                     </div>
 
                     <button type="submit" className="btn btn-success w-100">

@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
-import PageShell from './components/PageShell'
-import { fetchOrders, formatOrderDate, formatOrderStatus } from './utils/ordersApi'
+import PageShell from '../components/PageShell'
+import {
+  fetchOrders,
+  formatOrderDate,
+  formatOrderStatus,
+  getOrderStatusBadgeClass,
+} from '../utils/ordersApi'
 
 function OrderHistory() {
   const [orders, setOrders] = useState([])
@@ -21,17 +26,6 @@ function OrderHistory() {
 
     loadOrders()
   }, [])
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'approved':
-        return 'badge bg-success'
-      case 'declined':
-        return 'badge bg-danger'
-      default:
-        return 'badge bg-warning text-dark'
-    }
-  }
 
   return (
     <PageShell>
@@ -65,7 +59,7 @@ function OrderHistory() {
                     <td className="fw-semibold">{order.id}</td>
                     <td>{formatOrderDate(order)}</td>
                     <td>
-                      <span className={getStatusBadge(order.status)}>
+                      <span className={getOrderStatusBadgeClass(order.status)}>
                         {formatOrderStatus(order.status)}
                       </span>
                     </td>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+// This hook is generic: callers should keep one consistent message shape per page.
 function useTimedMessage(initialValue, delay = 3000) {
   const [message, setMessage] = useState(initialValue)
   const timerRef = useRef(null)

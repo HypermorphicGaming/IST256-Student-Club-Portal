@@ -1,4 +1,5 @@
-const ORDERS_API_URL = 'http://localhost:3000/api/orders'
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '')
+const ORDERS_API_URL = `${API_BASE_URL}/orders`
 
 async function requestOrders(endpoint = '', options = {}) {
   const response = await fetch(`${ORDERS_API_URL}${endpoint}`, options)
@@ -48,4 +49,15 @@ export function formatOrderDate(order) {
 export function formatOrderStatus(status) {
   const normalizedStatus = String(status || 'pending')
   return normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1)
+}
+
+export function getOrderStatusBadgeClass(status) {
+  switch (status) {
+    case 'approved':
+      return 'badge bg-success'
+    case 'declined':
+      return 'badge bg-danger'
+    default:
+      return 'badge bg-warning text-dark'
+  }
 }

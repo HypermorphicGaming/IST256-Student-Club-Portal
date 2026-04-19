@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import CartItemList from './components/CartItemList'
+import CartItemList from '../components/CartItemList'
 import {
   buildProductsFromEvents,
   buildValidCart,
   formatCurrency,
   parsePrice,
   safeReadArray,
-} from './utils/productUtils'
-import PageShell from './components/PageShell'
+} from '../utils/productUtils'
+import PageShell from '../components/PageShell'
 
 function CatalogCart() {
   const [products] = useState(() => {

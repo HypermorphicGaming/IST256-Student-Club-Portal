@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import PageShell from './components/PageShell'
-import { normalizeText, safeReadArray } from './utils/productUtils'
-import { createRandomUser } from './utils/testDataUtils'
-import useTimedMessage from './hooks/useTimedMessage'
-import { createEmptyUserForm, createUserForm } from './utils/managementForms'
+import PageShell from '../components/PageShell'
+import { normalizeText, safeReadArray } from '../utils/productUtils'
+import { createRandomUser } from '../utils/testDataUtils'
+import useTimedMessage from '../hooks/useTimedMessage'
+import { createEmptyUserForm, createUserForm } from '../utils/managementForms'
+import { buildFieldClassName } from '../utils/formValidation'
+import FormError from '../components/FormError'
 
 function ManageUsers() {
   const [formData, setFormData] = useState(() => createEmptyUserForm())
@@ -151,7 +153,7 @@ function ManageUsers() {
               </label>
               <input
                 type="text"
-                className={`form-control ${errors.firstName ? 'is-invalid' : formData.firstName && !errors.firstName ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.firstName, !!formData.firstName)}
                 id="firstName"
                 name="firstName"
                 value={formData.firstName}
@@ -159,7 +161,7 @@ function ManageUsers() {
                 autoComplete="off"
                 required
               />
-              {errors.firstName && <div className="text-danger">{errors.firstName}</div>}
+              <FormError message={errors.firstName} />
             </div>
 
             <div className="col-md-6">
@@ -168,7 +170,7 @@ function ManageUsers() {
               </label>
               <input
                 type="text"
-                className={`form-control ${errors.lastName ? 'is-invalid' : formData.lastName && !errors.lastName ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.lastName, !!formData.lastName)}
                 id="lastName"
                 name="lastName"
                 value={formData.lastName}
@@ -176,7 +178,7 @@ function ManageUsers() {
                 autoComplete="off"
                 required
               />
-              {errors.lastName && <div className="text-danger">{errors.lastName}</div>}
+              <FormError message={errors.lastName} />
             </div>
 
             <div className="col-md-6">
@@ -185,7 +187,7 @@ function ManageUsers() {
               </label>
               <input
                 type="email"
-                className={`form-control ${errors.email ? 'is-invalid' : formData.email && !errors.email ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.email, !!formData.email)}
                 id="email"
                 name="email"
                 value={formData.email}
@@ -193,7 +195,7 @@ function ManageUsers() {
                 autoComplete="off"
                 required
               />
-              {errors.email && <div className="text-danger">{errors.email}</div>}
+              <FormError message={errors.email} />
             </div>
 
             <div className="col-md-6">
@@ -202,14 +204,14 @@ function ManageUsers() {
               </label>
               <input
                 type="tel"
-                className={`form-control ${errors.phone ? 'is-invalid' : formData.phone && !errors.phone ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-control', errors.phone, !!formData.phone)}
                 id="phone"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
                 autoComplete="off"
               />
-              {errors.phone && <div className="text-danger">{errors.phone}</div>}
+              <FormError message={errors.phone} />
             </div>
 
             <div className="col-md-6">
@@ -218,7 +220,11 @@ function ManageUsers() {
               </label>
               <input
                 type="text"
-                className={`form-control ${errors.organization ? 'is-invalid' : formData.organization && !errors.organization ? 'is-valid' : ''}`}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.organization,
+                  !!formData.organization
+                )}
                 id="organization"
                 name="organization"
                 value={formData.organization}
@@ -226,7 +232,7 @@ function ManageUsers() {
                 autoComplete="off"
                 required
               />
-              {errors.organization && <div className="text-danger">{errors.organization}</div>}
+              <FormError message={errors.organization} />
             </div>
 
             <div className="col-md-6">
@@ -234,7 +240,7 @@ function ManageUsers() {
                 Grade Level <strong className="text-danger">*</strong>
               </label>
               <select
-                className={`form-select ${errors.gradeLevel ? 'is-invalid' : formData.gradeLevel && !errors.gradeLevel ? 'is-valid' : ''}`}
+                className={buildFieldClassName('form-select', errors.gradeLevel, !!formData.gradeLevel)}
                 id="gradeLevel"
                 name="gradeLevel"
                 value={formData.gradeLevel}
@@ -247,7 +253,7 @@ function ManageUsers() {
                 <option value="junior">Junior</option>
                 <option value="senior">Senior</option>
               </select>
-              {errors.gradeLevel && <div className="text-danger">{errors.gradeLevel}</div>}
+              <FormError message={errors.gradeLevel} />
             </div>
 
             <div className="col-12 d-flex flex-wrap gap-2">

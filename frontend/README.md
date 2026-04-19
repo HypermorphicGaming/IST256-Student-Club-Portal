@@ -47,6 +47,12 @@ npm run dev
 http://localhost:5173
 ```
 
+Backend API default URL:
+
+```text
+http://localhost:3000/api/orders
+```
+
 ## Scripts
 
 - `npm run dev`: Start Vite dev server.
@@ -57,18 +63,32 @@ http://localhost:5173
 ## Project Structure
 
 ```text
-src/
-	App.jsx
-	Home.jsx
-	NavBar.jsx
-	CatalogCart.jsx
-	Checkout.jsx
-	ManageUsers.jsx
-	ManageEvents.jsx
-	components/
-		Footer.jsx
-	utils/
-		productUtils.js
+frontend/
+	src/
+		App.jsx
+		NavBar.jsx
+		pages/
+			Home.jsx
+			CatalogCart.jsx
+			Checkout.jsx
+			ManageUsers.jsx
+			ManageEvents.jsx
+			ApprovalPage.jsx
+			OrderHistory.jsx
+		components/
+			PageShell.jsx
+			CartItemList.jsx
+			Footer.jsx
+		utils/
+			productUtils.js
+			ordersApi.js
+			managementForms.js
+			testDataUtils.js
+backend/
+	server.js
+	routes/
+		orders.js
+	orders.json
 ```
 
 ## Data Storage Keys
@@ -81,4 +101,5 @@ src/
 
 - User, event, and cart state use localStorage.
 - Order approval/history uses the backend API at `http://localhost:3000/api/orders`.
+- Backend order data is stored in `backend/orders.json` as a JSON array.
 - Build output in `dist/` is generated and should not be committed.
