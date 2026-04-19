@@ -148,36 +148,36 @@ function Checkout() {
   return (
     <PageShell>
       <main className="container-fluid flex-grow-1">
-        <div className="row g-3 mt-3 justify-content-center">
-          <div className="col-lg-4">
-            <aside className="cart-sidebar sticky-top" style={{ top: '1rem' }}>
-              <div className="card mb-3 cart-card">
-                <div className="card-header bg-primary text-white">
-                  <h5 className="mb-0">Registration Cart</h5>
-                </div>
-                <div className="card-body">
-                  <div className="cart-items mb-3">
-                    <CartItemList items={cart} onRemove={removeFromCart} />
-                  </div>
-                </div>
-
-                <div className="card-footer bg-light">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <span className="fw-bold">Total Cost:</span>
-                    <span className="fw-bold text-primary">{formatCurrency(total)}</span>
-                  </div>
+        <div className="row g-3 mt-3">
+          <div className="col-lg-5">
+            <div className="card mb-3 cart-card">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">Registration Cart</h5>
+              </div>
+              <div className="card-body">
+                <div className="cart-items mb-3">
+                  <CartItemList items={cart} onRemove={removeFromCart} />
                 </div>
               </div>
-
-              <div className="card checkout-card">
-                <div className="card-header bg-success text-white">
-                  <h5 className="mb-0">Complete Registration</h5>
+              <div className="card-footer bg-light">
+                <div className="d-flex justify-content-between align-items-center">
+                  <span className="fw-bold">Total Cost:</span>
+                  <span className="fw-bold text-primary">{formatCurrency(total)}</span>
                 </div>
-                <div className="card-body">
-                  <form onSubmit={handleSubmit}>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-lg-7">
+            <div className="card checkout-card">
+              <div className="card-header bg-success text-white">
+                <h5 className="mb-0">Complete Registration</h5>
+              </div>
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
                     <div className="mb-3">
                       <label htmlFor="name" className="form-label">
-                        Full Name
+                        Full Name <strong className="text-danger">*</strong>
                       </label>
                       <input
                         type="text"
@@ -194,7 +194,7 @@ function Checkout() {
 
                     <div className="mb-3">
                       <label htmlFor="email" className="form-label">
-                        Email Address
+                        Email Address <strong className="text-danger">*</strong>
                       </label>
                       <input
                         type="email"
@@ -215,7 +215,7 @@ function Checkout() {
 
                     <div className="mb-3">
                       <label htmlFor="address" className="form-label">
-                        Contact Address
+                        Contact Address <strong className="text-danger">*</strong>
                       </label>
                       <textarea
                         className={buildFieldClassName(
@@ -237,10 +237,9 @@ function Checkout() {
                     <button type="submit" className="btn btn-success w-100">
                       Reserve Seats
                     </button>
-                  </form>
-                </div>
+                </form>
               </div>
-            </aside>
+            </div>
           </div>
         </div>
       </main>
