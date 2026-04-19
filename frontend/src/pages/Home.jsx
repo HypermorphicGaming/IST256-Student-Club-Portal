@@ -8,6 +8,11 @@ function Home() {
         <section className="hero">
           <h2>Welcome to the Student Club Portal</h2>
           <p>Discover clubs, connect with members, and manage events</p>
+          <img
+            src="/public/Old-Main-1024x682.jpg"
+            alt="Old Main"
+            className="hero"
+            />
         </section>
 
         <section className="dashboard d-grid gap-3">
