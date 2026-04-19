@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react'
 import PageShell from '../components/PageShell'
-import { fetchOrders, formatOrderDate, updateOrderStatus } from '../utils/ordersApi'
+import {
+  deleteOrder,
+  fetchOrders,
+  formatOrderDate,
+  formatOrderStatus,
+  getOrderStatusBadgeClass,
+  updateOrderStatus,
+} from '../utils/ordersApi'
 
 function ApprovalPage() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const pendingOrders = orders.filter((order) => order.status === 'pending')
 
   useEffect(() => {
     async function loadOrders() {
@@ -28,10 +34,24 @@ function ApprovalPage() {
       setError('')
       const updatedOrder = await updateOrderStatus(id, status)
       setOrders((currentOrders) =>
-        currentOrders.filter((order) => String(order.id) !== String(updatedOrder.id))
+        currentOrders.map((order) =>
+          String(order.id) === String(updatedOrder.id) ? updatedOrder : order
+        )
       )
-    } catch {
-      setError('Failed to update order status.')
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : 'Failed to update order status.')
+    }
+  }
+
+  async function removeOrder(id) {
+    try {
+      setError('')
+      await deleteOrder(id)
+      setOrders((currentOrders) =>
+        currentOrders.filter((order) => String(order.id) !== String(id))
+      )
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : 'Failed to delete order.')
     }
   }
 
@@ -41,19 +61,19 @@ function ApprovalPage() {
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
           <div>
             <h1 className="h3 mb-1">Admin Dashboard</h1>
-            <p className="text-muted mb-0">Pending orders waiting for review.</p>
+            <p className="text-muted mb-0">All registrations remain visible until deleted.</p>
           </div>
         </div>
 
-        {loading && <div className="alert alert-info">Loading pending orders...</div>}
+        {loading && <div className="alert alert-info">Loading registrations...</div>}
         {!loading && error && <div className="alert alert-danger">{error}</div>}
-        {!loading && !error && pendingOrders.length === 0 && (
-          <div className="alert alert-success">No pending orders right now.</div>
+        {!loading && orders.length === 0 && (
+          <div className="alert alert-success">No registrations found.</div>
         )}
 
-        {!loading && !error && pendingOrders.length > 0 && (
+        {!loading && orders.length > 0 && (
           <div className="row g-3">
-            {pendingOrders.map((order) => (
+            {orders.map((order) => (
               <div className="col-12 col-md-6 col-lg-4" key={order.id}>
                 <div className="card h-100 shadow-sm">
                   <div className="card-body d-flex flex-column">
@@ -63,21 +83,32 @@ function ApprovalPage() {
                     </p>
                     <p className="mb-3">
                       <strong>Status:</strong>{' '}
-                      <span className="badge bg-warning text-dark">Pending</span>
+                      <span className={getOrderStatusBadgeClass(order.status)}>
+                        {formatOrderStatus(order.status)}
+                      </span>
                     </p>
 
                     <div className="mt-auto d-flex gap-2">
                       <button
                         className="btn btn-success flex-grow-1"
                         onClick={() => updateStatus(order.id, 'approved')}
+                        disabled={order.status === 'approved'}
                       >
                         Approve
                       </button>
                       <button
                         className="btn btn-danger flex-grow-1"
                         onClick={() => updateStatus(order.id, 'declined')}
+                        disabled={order.status === 'declined'}
                       >
                         Decline
+                      </button>
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={() => removeOrder(order.id)}
+                        aria-label={`Delete order ${order.id}`}
+                      >
+                        Delete
                       </button>
                     </div>
                   </div>

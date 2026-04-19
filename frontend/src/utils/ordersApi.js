@@ -3,9 +3,30 @@ const ORDERS_API_URL = `${API_BASE_URL}/orders`
 
 async function requestOrders(endpoint = '', options = {}) {
   const response = await fetch(`${ORDERS_API_URL}${endpoint}`, options)
+  const contentType = response.headers.get('content-type') || ''
+  const isJsonResponse = contentType.includes('application/json')
 
   if (!response.ok) {
-    throw new Error('Order request failed.')
+    let errorMessage = 'Order request failed.'
+
+    if (isJsonResponse) {
+      const errorData = await response.json()
+      if (errorData && typeof errorData.error === 'string' && errorData.error.trim()) {
+        errorMessage = errorData.error
+      }
+    } else {
+      const textBody = await response.text()
+      if (typeof textBody === 'string' && textBody.trim()) {
+        const match = textBody.match(/<pre>(.*?)<\/pre>/i)
+        errorMessage = match?.[1]?.trim() || textBody.trim()
+      }
+    }
+
+    throw new Error(errorMessage)
+  }
+
+  if (!isJsonResponse || response.status === 204) {
+    return null
   }
 
   return response.json()
@@ -33,6 +54,12 @@ export async function updateOrderStatus(orderId, status) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ status }),
+  })
+}
+
+export async function deleteOrder(orderId) {
+  return requestOrders(`/${orderId}`, {
+    method: 'DELETE',
   })
 }
 

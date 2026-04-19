@@ -81,6 +81,25 @@ function createOrdersRouter({ readOrders, writeOrders }) {
     }
   })
 
+  router.delete('/:id', async (req, res) => {
+    const { id } = req.params
+
+    try {
+      const orders = await readOrders()
+      const orderIndex = orders.findIndex((order) => String(order.id) === String(id))
+
+      if (orderIndex < 0) {
+        return res.status(404).json({ error: 'Order not found.' })
+      }
+
+      const [deletedOrder] = orders.splice(orderIndex, 1)
+      await writeOrders(orders)
+      return res.status(200).json(deletedOrder)
+    } catch (error) {
+      return handleServerError(res, 'Failed to delete order:', error)
+    }
+  })
+
   return router
 }
 
