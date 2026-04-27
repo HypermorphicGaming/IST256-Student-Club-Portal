@@ -114,8 +114,6 @@ function ManageEvents() {
                 ...event,
                 ...normalizedData,
                 eventId: editingEventId,
-                eventCost: normalizedData.eventCost,
-                openSeats: normalizedData.openSeats,
               }
             : event
         )
@@ -124,8 +122,6 @@ function ManageEvents() {
           {
             ...normalizedData,
             eventId: `event-${Date.now()}`,
-            eventCost: normalizedData.eventCost,
-            openSeats: normalizedData.openSeats,
           },
         ]
 
@@ -200,7 +196,11 @@ function ManageEvents() {
               </label>
               <input
                 type="text"
-                className={buildFieldClassName('form-control', errors.eventName, !!formData.eventName)}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.eventName,
+                  !!formData.eventName
+                )}
                 id="eventName"
                 name="eventName"
                 value={formData.eventName}
@@ -264,7 +264,11 @@ function ManageEvents() {
               </label>
               <input
                 type="date"
-                className={buildFieldClassName('form-control', errors.eventDate, !!formData.eventDate)}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.eventDate,
+                  !!formData.eventDate
+                )}
                 id="eventDate"
                 name="eventDate"
                 value={formData.eventDate}
@@ -280,7 +284,11 @@ function ManageEvents() {
               </label>
               <input
                 type="time"
-                className={buildFieldClassName('form-control', errors.eventTime, !!formData.eventTime)}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.eventTime,
+                  !!formData.eventTime
+                )}
                 id="eventTime"
                 name="eventTime"
                 value={formData.eventTime}
@@ -317,7 +325,11 @@ function ManageEvents() {
               </label>
               <input
                 type="number"
-                className={buildFieldClassName('form-control', errors.openSeats, !!formData.openSeats)}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.openSeats,
+                  !!formData.openSeats
+                )}
                 id="openSeats"
                 name="openSeats"
                 min="1"

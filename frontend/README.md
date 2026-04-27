@@ -1,6 +1,6 @@
-# IST256 Student Club Portal
+# Frontend: Student Club Portal
 
-Simple React + Vite portal for student club registration and management.
+React + Vite client for student registration, event browsing, checkout, and order/admin views.
 
 ## Features
 
@@ -28,14 +28,14 @@ Simple React + Vite portal for student club registration and management.
 npm install
 ```
 
-2. Start the backend API (from the `backend/` folder):
+2. Start the backend API (from the repository root):
 
 ```bash
-npm install
-npm start
+npm --prefix ../backend install
+npm --prefix ../backend start
 ```
 
-3. Start the frontend development server (from the `frontend/` folder):
+3. Start the frontend development server:
 
 ```bash
 npm run dev
@@ -47,10 +47,10 @@ npm run dev
 http://localhost:5173
 ```
 
-Backend API default URL:
+Backend API default base URL:
 
 ```text
-http://localhost:3000/api/orders
+http://localhost:3000/api
 ```
 
 ## Scripts
@@ -100,6 +100,7 @@ backend/
 ## Notes
 
 - User, event, and cart state use localStorage.
-- Order approval/history uses the backend API at `http://localhost:3000/api/orders`.
-- Backend order data is stored in `backend/orders.json` as a JSON array.
+- Order approval/history uses backend routes under `http://localhost:3000/api/orders`.
+- If MongoDB is unavailable, backend order routes fall back to `backend/orders.json`.
+- Repository-level documentation is in the root `README.md`.
 - Build output in `dist/` is generated and should not be committed.

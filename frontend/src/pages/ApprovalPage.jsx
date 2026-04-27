@@ -39,7 +39,9 @@ function ApprovalPage() {
         )
       )
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : 'Failed to update order status.')
+      setError(
+        caughtError instanceof Error ? caughtError.message : 'Failed to update order status.'
+      )
     }
   }
 
@@ -47,9 +49,7 @@ function ApprovalPage() {
     try {
       setError('')
       await deleteOrder(id)
-      setOrders((currentOrders) =>
-        currentOrders.filter((order) => String(order.id) !== String(id))
-      )
+      setOrders((currentOrders) => currentOrders.filter((order) => String(order.id) !== String(id)))
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : 'Failed to delete order.')
     }

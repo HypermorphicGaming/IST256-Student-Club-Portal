@@ -3,6 +3,8 @@
 # Node and build output
 node_modules
 dist
+coverage
+.cache
 
 # Logs
 logs
@@ -14,12 +16,16 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Local environment files
+.env
+.env.*
+!.env.example
 *.local
 .vite/
 
 # Common editor artifacts
 .idea
 .DS_Store
+.DS_Store?
 *.suo
 *.ntvs*
 *.njsproj

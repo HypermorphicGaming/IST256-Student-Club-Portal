@@ -175,68 +175,68 @@ function Checkout() {
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                      <label htmlFor="name" className="form-label">
-                        Full Name <strong className="text-danger">*</strong>
-                      </label>
-                      <input
-                        type="text"
-                        className={buildFieldClassName('form-control', errors.name, !!formData.name)}
-                        id="name"
-                        name="name"
-                        placeholder="John Doe"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <FormError message={errors.name} className="invalid-feedback" />
-                    </div>
+                  <div className="mb-3">
+                    <label htmlFor="name" className="form-label">
+                      Full Name <strong className="text-danger">*</strong>
+                    </label>
+                    <input
+                      type="text"
+                      className={buildFieldClassName('form-control', errors.name, !!formData.name)}
+                      id="name"
+                      name="name"
+                      placeholder="John Doe"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <FormError message={errors.name} className="invalid-feedback" />
+                  </div>
 
-                    <div className="mb-3">
-                      <label htmlFor="email" className="form-label">
-                        Email Address <strong className="text-danger">*</strong>
-                      </label>
-                      <input
-                        type="email"
-                        className={buildFieldClassName(
-                          'form-control',
-                          errors.email,
-                          !!formData.email
-                        )}
-                        id="email"
-                        name="email"
-                        placeholder="john@example.com"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <FormError message={errors.email} className="invalid-feedback" />
-                    </div>
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label">
+                      Email Address <strong className="text-danger">*</strong>
+                    </label>
+                    <input
+                      type="email"
+                      className={buildFieldClassName(
+                        'form-control',
+                        errors.email,
+                        !!formData.email
+                      )}
+                      id="email"
+                      name="email"
+                      placeholder="john@example.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <FormError message={errors.email} className="invalid-feedback" />
+                  </div>
 
-                    <div className="mb-3">
-                      <label htmlFor="address" className="form-label">
-                        Contact Address <strong className="text-danger">*</strong>
-                      </label>
-                      <textarea
-                        className={buildFieldClassName(
-                          'form-control',
-                          errors.address,
-                          !!formData.address
-                        )}
-                        id="address"
-                        name="address"
-                        rows="3"
-                        placeholder="123 Main St, City, State 12345"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        required
-                      />
-                      <FormError message={errors.address} className="invalid-feedback" />
-                    </div>
+                  <div className="mb-3">
+                    <label htmlFor="address" className="form-label">
+                      Contact Address <strong className="text-danger">*</strong>
+                    </label>
+                    <textarea
+                      className={buildFieldClassName(
+                        'form-control',
+                        errors.address,
+                        !!formData.address
+                      )}
+                      id="address"
+                      name="address"
+                      rows="3"
+                      placeholder="123 Main St, City, State 12345"
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <FormError message={errors.address} className="invalid-feedback" />
+                  </div>
 
-                    <button type="submit" className="btn btn-success w-100">
-                      Reserve Seats
-                    </button>
+                  <button type="submit" className="btn btn-success w-100">
+                    Reserve Seats
+                  </button>
                 </form>
               </div>
             </div>

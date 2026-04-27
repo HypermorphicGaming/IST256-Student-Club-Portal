@@ -153,7 +153,11 @@ function ManageUsers() {
               </label>
               <input
                 type="text"
-                className={buildFieldClassName('form-control', errors.firstName, !!formData.firstName)}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.firstName,
+                  !!formData.firstName
+                )}
                 id="firstName"
                 name="firstName"
                 value={formData.firstName}
@@ -170,7 +174,11 @@ function ManageUsers() {
               </label>
               <input
                 type="text"
-                className={buildFieldClassName('form-control', errors.lastName, !!formData.lastName)}
+                className={buildFieldClassName(
+                  'form-control',
+                  errors.lastName,
+                  !!formData.lastName
+                )}
                 id="lastName"
                 name="lastName"
                 value={formData.lastName}
@@ -240,7 +248,11 @@ function ManageUsers() {
                 Grade Level <strong className="text-danger">*</strong>
               </label>
               <select
-                className={buildFieldClassName('form-select', errors.gradeLevel, !!formData.gradeLevel)}
+                className={buildFieldClassName(
+                  'form-select',
+                  errors.gradeLevel,
+                  !!formData.gradeLevel
+                )}
                 id="gradeLevel"
                 name="gradeLevel"
                 value={formData.gradeLevel}
