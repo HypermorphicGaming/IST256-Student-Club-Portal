@@ -151,8 +151,32 @@
     ],
     "totalCost": 5,
     "date": "2026-04-19T22:47:47.233Z",
-    "status": "pending",
+    "status": "approved",
     "createdAt": "2026-04-19T22:47:47.233Z",
-    "updatedAt": "2026-04-19T22:47:47.282Z"
+    "updatedAt": "2026-04-26T21:49:20.701Z"
+  },
+  {
+    "id": "0d74eaf6-6f2f-4957-a013-a3e1c7c12419",
+    "customer": {
+      "name": "john",
+      "email": "r@gmail.com",
+      "address": "3805 ave H"
+    },
+    "items": [
+      {
+        "productId": "event-1776047725026-t0bkut",
+        "description": "Club Social",
+        "category": "social",
+        "unitOfMeasure": "seat",
+        "price": 12.5,
+        "openSeats": 102,
+        "sourceEventId": "event-1776047725026-t0bkut"
+      }
+    ],
+    "totalCost": 12.5,
+    "date": "2026-04-26T22:07:47.477Z",
+    "status": "pending",
+    "createdAt": "2026-04-26T22:07:47.477Z",
+    "updatedAt": "2026-04-26T22:07:47.506Z"
   }
 ]
